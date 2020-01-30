@@ -17,6 +17,7 @@ setup(
   author='torrua',
   author_email='torrua@gmail.com',
   url='https://github.com/torrua/keyboa',
+  download_url='https://github.com/torrua/keyboa/archive/v1.0.0.tar.gz',
   keywords=['Generate', 'Inline', 'Keyboard', 'Telegram'],
   install_requires=[
           'pytelegrambotapi',
