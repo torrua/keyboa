@@ -5,7 +5,7 @@ Test for button_maker() function
 import os
 import sys
 
-sys.path.insert(0, f"{os.path.dirname(os.path.abspath(__file__))}/../")
+sys.path.insert(0, "%s/../" % os.path.dirname(os.path.abspath(__file__)))
 
 import pytest
 from telebot.types import InlineKeyboardButton

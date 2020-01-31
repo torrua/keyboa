@@ -57,10 +57,10 @@ def _keyboard_pre_check(
         items = [items, ]
 
     if keyboard and not isinstance(keyboard, InlineKeyboardMarkup):
-        raise TypeError(
-            f"Keyboard to which the new items will be added "
-            f"should have InlineKeyboardMarkup type. Now it is a {type(keyboard)}"
-        )
+        type_error_message = \
+            "Keyboard to which the new items will be added " \
+            "should have InlineKeyboardMarkup type. Now it is a %s" % type(keyboard)
+        raise TypeError(type_error_message)
 
     # We need to count existing buttons too if we passed keyboard object to the function
     if keyboard:
@@ -71,11 +71,11 @@ def _keyboard_pre_check(
         expecting_items_number = len(items)
 
     value_error_message_keyboard = \
-        f"Telegram Bot API limit exceeded: The keyboard should have " \
-        f"from 1 to %s buttons at all. Your total amount is %s."
+        "Telegram Bot API limit exceeded: The keyboard should have " \
+        "from 1 to %s buttons at all. Your total amount is %s."
     value_error_message_line = \
-        f"Telegram Bot API limit exceeded: " \
-        f"The keyboard line should have from 1 to %s buttons. You entered %s."
+        "Telegram Bot API limit exceeded: " \
+        "The keyboard line should have from 1 to %s buttons. You entered %s."
 
     items_in_keyboard_allowed_range = range(1, 101)  # Telegram limitation
     if expecting_items_number not in items_in_keyboard_allowed_range:
@@ -132,21 +132,23 @@ def button_maker(
         back_marker = ""
 
     if not isinstance(front_marker, CallbackDataMarker.__args__):
-        raise TypeError(
-            f"Marker could not have {type(front_marker)} type. "
-            f"Only {CallbackDataMarker} allowed.")
+        type_error_message = \
+            "Marker could not have %s type. Only %s allowed." \
+            % (type(front_marker), CallbackDataMarker)
+        raise TypeError(type_error_message)
 
     if not isinstance(back_marker, CallbackDataMarker.__args__):
-        raise TypeError(
-            f"Marker could not be {type(back_marker)}. "
-            f"Only {CallbackDataMarker} allowed.")
+        type_error_message = \
+            "Marker could not have %s type. Only %s allowed." \
+            % (type(back_marker), CallbackDataMarker)
+        raise TypeError(type_error_message)
 
     if isinstance(button_data, InlineKeyboardButton):
         return button_data
 
     if isinstance(button_data, (str, int)):
-        text = f"{button_data}"
-        callback = f"{button_data}" if copy_text_to_callback else ""
+        text = str(button_data)
+        callback = str(button_data) if copy_text_to_callback else ""
 
     elif isinstance(button_data, tuple):
         text, callback = _button_data_extractor(button_data)
@@ -157,18 +159,20 @@ def button_maker(
         elif len(button_data.keys()) == 1:
             text, callback = _button_data_extractor(next(iter(button_data.items())))
         else:
-            raise ValueError(f"Cannot convert dictionary {button_data} to InlineButtonData object. "
-                             f"You passed more than one item, but did not add 'text' key.")
+            value_type_error = \
+                "Cannot convert dictionary to InlineButtonData object. " \
+                "You passed more than one item, but did not add 'text' key." % button_data
+            raise ValueError(value_type_error)
 
     else:
-        raise TypeError(
-            f"Cannot create {InlineKeyboardButton} from {type(button_data)}. "
-            f"Please use {InlineButtonData} instead.")
+        type_error_message = "Cannot create %s from %s. Please use %s instead." \
+            % (InlineKeyboardButton, type(button_data), InlineButtonData)
+        raise TypeError(type_error_message)
 
     if not text:
         raise ValueError("Button text cannot be empty.")
 
-    callback_data = f"{front_marker}{callback}{back_marker}"
+    callback_data = "%s%s%s" % (front_marker, callback, back_marker)
 
     if not callback_data:
         raise ValueError("The callback data cannot be empty.")
@@ -186,16 +190,16 @@ def _button_data_extractor(button_data: Union[tuple, dict]) -> (str, str):
     """
     raw_text = button_data[0]
     if not isinstance(raw_text, ButtonText.__args__):
-        raise TypeError(
-            f"Button text cannot be {type(raw_text)}. "
-            f"Only {ButtonText} allowed.")
-    text = f"{raw_text}"
+        type_error_message = "Button text cannot be %s. Only %s allowed." \
+            % (type(raw_text), ButtonText)
+        raise TypeError(type_error_message)
+    text = str(raw_text)
     raw_callback = button_data[1]
     if not isinstance(raw_callback, CallbackDataMarker.__args__):
-        raise TypeError(
-            f"Callback cannot be {type(raw_callback)}. "
-            f"Only {CallbackDataMarker} allowed.")
-    callback = f"{raw_callback}"
+        type_error_message = "Callback cannot be %s. Only %s allowed." \
+            % (type(raw_callback), CallbackDataMarker)
+        raise TypeError(type_error_message)
+    callback = str(raw_callback)
     return text, callback
 
 
@@ -376,9 +380,10 @@ def keyboard_combiner(
 
     for data in keyboards:
         if not isinstance(data, dict):
-            raise TypeError(
-                f"Cannot create {InlineKeyboardMarkup} from {type(data)}. "
-                f"Please use a dict to pass data instead.")
+            type_error_message = \
+                "Cannot create %s from %s. Please use a dict to pass data instead." \
+                % (InlineKeyboardMarkup, type(data))
+            raise TypeError(type_error_message)
 
         body_trigger = any([
             data.get("items_in_line", None),

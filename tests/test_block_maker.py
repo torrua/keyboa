@@ -5,7 +5,7 @@ Test for block_maker() function
 import os
 import sys
 
-sys.path.insert(0, f"{os.path.dirname(os.path.abspath(__file__))}/../")
+sys.path.insert(0, "%s/../" % os.path.dirname(os.path.abspath(__file__)))
 
 import pytest
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -69,7 +69,7 @@ def test_pass_one_row():
     )
     assert isinstance(result, InlineKeyboardMarkup)
     assert len(result.__dict__["keyboard"]) == stop
-    assert result.__dict__["keyboard"][0][0]["callback_data"] == f"FRONT_{start}"
+    assert result.__dict__["keyboard"][0][0]["callback_data"] == "FRONT_%s" % start
 
 
 def test_pass_structure():
@@ -83,6 +83,6 @@ def test_pass_structure():
         copy_text_to_callback=True)
     assert isinstance(result, InlineKeyboardMarkup)
     assert len(result.__dict__["keyboard"]) == 3
-    assert result.__dict__["keyboard"][0][0]["callback_data"] == f"STRUCTURE_{0}"
-    assert result.__dict__["keyboard"][1][0]["callback_data"] == f"STRUCTURE_{2}"
-    assert result.__dict__["keyboard"][2][0]["callback_data"] == f"STRUCTURE_string"
+    assert result.__dict__["keyboard"][0][0]["callback_data"] == "STRUCTURE_0"
+    assert result.__dict__["keyboard"][1][0]["callback_data"] == "STRUCTURE_2"
+    assert result.__dict__["keyboard"][2][0]["callback_data"] == "STRUCTURE_string"
