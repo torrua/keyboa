@@ -1,19 +1,12 @@
 from distutils.core import setup
 
 
-def read(filename):
-    with open(filename, encoding='utf-8') as file:
-        return file.read()
-
-
 setup(
   name='keyboa',
   packages=['keyboa'],
-  version='1.0.0',
+  version='1.0.1',
   license='MIT',
   description="Telegram Inline Keyboards Generator",
-  long_description=read('README.md'),
-  long_description_content_type="text/markdown",
   author='torrua',
   author_email='torrua@gmail.com',
   url='https://github.com/torrua/keyboa',
