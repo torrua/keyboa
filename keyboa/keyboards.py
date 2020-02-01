@@ -356,46 +356,34 @@ def block_maker(
 
 
 def keyboard_combiner(
-        keyboards: Union[Tuple, Dict],
-        add_to_keyboard: InlineKeyboardMarkup = None,
+        keyboards: Optional[Union[Tuple[InlineKeyboardMarkup, ...], InlineKeyboardMarkup]] = None
 ) -> InlineKeyboardMarkup:
     """
-    This function combines multiple data sets into one InlineKeyboardMarkup object.
-    Each set must be passed in a dictionary whose keys
-    are the names of variables for makers functions.
+    This function combines multiple InlineKeyboardMarkup objects into one.
 
-    :param keyboards: Sequence of dictionaries with prepared data.
-        Also could be presented as a standalone dictionary.
-
-    :param add_to_keyboard: InlineKeyboardMarkup -
-        Keyboard to which the specified keyboards will be added.
+    :param keyboards: Sequence of InlineKeyboardMarkup objects.
+        Also could be presented as a standalone InlineKeyboardMarkup.
 
     :return: InlineKeyboardMarkup
     """
 
-    keyboard = add_to_keyboard if add_to_keyboard else InlineKeyboardMarkup()
+    if keyboards is None:
+        return InlineKeyboardMarkup()
 
-    if isinstance(keyboards, dict):
-        keyboards = (keyboards,)
+    if isinstance(keyboards, InlineKeyboardMarkup):
+        keyboards = (keyboards, )
 
-    for data in keyboards:
-        if not isinstance(data, dict):
+    data = []
+    for keyboard in keyboards:
+        if keyboard is None:
+            continue
+
+        if not isinstance(keyboard, InlineKeyboardMarkup):
             type_error_message = \
-                "Cannot create %s from %s. Please use a dict to pass data instead." \
-                % (InlineKeyboardMarkup, type(data))
+                "Keyboard element cannot be %s. Only InlineKeyboardMarkup allowed." \
+                % type(keyboard)
             raise TypeError(type_error_message)
 
-        body_trigger = any([
-            data.get("items_in_line", None),
-            data.get("auto_alignment", None),
-            data.get("slice_start", None),
-            data.get("slice_stop", None),
-            data.get("slice_step", None),
-        ])
+        data.extend(list(*keyboard.to_dic().values()))
 
-        if body_trigger:
-            keyboard = body_maker(**data, add_to_keyboard=keyboard, )
-        else:
-            keyboard = block_maker(**data, add_to_keyboard=keyboard, )
-
-    return keyboard
+    return block_maker(data)
