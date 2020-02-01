@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 """
-Test for block_maker() function
+Test for keyboa_maker() function
 """
 import os
 import sys
@@ -9,7 +9,7 @@ sys.path.insert(0, "%s/../" % os.path.dirname(os.path.abspath(__file__)))
 
 import pytest
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
-from keyboa.keyboards import block_maker
+from keyboa.keyboards import keyboa_maker
 
 
 def test_pass_none():
@@ -17,7 +17,7 @@ def test_pass_none():
 
     :return:
     """
-    result = block_maker()
+    result = keyboa_maker()
     assert isinstance(result, InlineKeyboardMarkup)
     assert result.__dict__["keyboard"] == []
 
@@ -27,7 +27,7 @@ def test_pass_string_with_copy_to_callback():
 
     :return:
     """
-    result = block_maker(
+    result = keyboa_maker(
         items="Text", copy_text_to_callback=True)
     assert isinstance(result, InlineKeyboardMarkup)
     assert result.__dict__["keyboard"] == [[{'callback_data': 'Text', 'text': 'Text'}]]
@@ -39,7 +39,7 @@ def test_pass_string_without_copy_to_callback():
     :return:
     """
     with pytest.raises(Exception) as _:
-        assert isinstance(block_maker(items="Text"), InlineKeyboardMarkup)
+        assert isinstance(keyboa_maker(items="Text"), InlineKeyboardMarkup)
 
 
 def test_pass_one_button():
@@ -47,7 +47,7 @@ def test_pass_one_button():
 
     :return:
     """
-    result = block_maker(
+    result = keyboa_maker(
         items=InlineKeyboardButton(
             **{"text": "text", "callback_data": "callback_data"}))
     assert isinstance(result, InlineKeyboardMarkup)
@@ -62,7 +62,7 @@ def test_pass_one_row():
     """
     start = 0
     stop = 8
-    result = block_maker(
+    result = keyboa_maker(
         items=list(range(start, stop)),
         front_marker="FRONT_",
         copy_text_to_callback=True,
@@ -77,7 +77,7 @@ def test_pass_structure():
 
     :return:
     """
-    result = block_maker(
+    result = keyboa_maker(
         items=[list(range(0, 4)), list(range(2, 5)), "string"],
         front_marker="STRUCTURE_",
         copy_text_to_callback=True)

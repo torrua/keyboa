@@ -28,7 +28,7 @@ DEFAULT_ITEMS_IN_LINE = 1
 AUTO_ALIGNMENT_RANGE = range(3, 6)
 
 
-def _keyboard_pre_check(
+def _keyboa_pre_check(
         items: BlockItems = None,
         items_in_line: int = None,
         keyboard: InlineKeyboardMarkup = None) -> None:
@@ -165,7 +165,10 @@ def button_maker(
             raise ValueError(value_type_error)
 
     else:
-        type_error_message = "Cannot create %s from %s. Please use %s instead." \
+        type_error_message = \
+            "Cannot create %s from %s. Please use %s instead.\n" \
+            "Probably you specified 'auto_alignment' or 'items_in_line' " \
+            "parameter for StructuredSequence." \
             % (InlineKeyboardButton, type(button_data), InlineButtonData)
         raise TypeError(type_error_message)
 
@@ -203,12 +206,12 @@ def _button_data_extractor(button_data: Union[tuple, dict]) -> (str, str):
     return text, callback
 
 
-def body_maker(
-        items: FlatSequence,
+def keyboa_maker(
+        items: BlockItems = None,
         front_marker: CallbackDataMarker = None,
         back_marker: CallbackDataMarker = None,
 
-        items_in_line: int = DEFAULT_ITEMS_IN_LINE,
+        items_in_line: int = None,
         auto_alignment: bool = False,
         slice_start: int = None,
         slice_stop: int = None,
@@ -217,119 +220,6 @@ def body_maker(
         copy_text_to_callback: bool = False,
         add_to_keyboard: InlineKeyboardMarkup = None,
 ) -> InlineKeyboardMarkup:
-    """
-    This function creates an InlineKeyboardMarkup from a
-    sequence of InlineButtonData elements (FlatSequence).
-    Additionally, you can set the number of buttons in each
-    row using variable "items_in_line".
-    Also you can make a slice of sequence with
-    ["slice_start":"slice_stop":"slice_step"] variables.
-
-    :param items: InlineRowItems - Iterable sequence of InlineButtonData elements.
-
-    :param front_marker: CallbackDataMarker - Front part of callback data,
-        which is common for all buttons.
-        Optional. The default value is empty string.
-
-    :param back_marker: CallbackDataMarker - Back part of callback data,
-        which is common for all buttons.
-        Optional. The default value is empty string.
-
-    :param items_in_line: The number of buttons in one keyboard line
-        must be from one to eight due to the Telegram Bot API limitation.
-        Optional. The default value is 1.
-
-    :param auto_alignment: Bool - If enabled, will try to split all items into equal rows.
-        This enabled option replaces variable "items_in_line".
-        But if a suitable divisor cannot be found, function
-        will use the value of variable "items_in_line".
-        Optional. The default value is False.
-
-    :param slice_start: int - Refers to the index of the element
-        which is used as a start of the slice.
-        Optional. The default value is None.
-
-    :param slice_stop: int - Refers to the index of the element
-        we should stop just before to finish slice.
-        Optional. The default value is None.
-
-    :param slice_step: int - Allows you to take each
-        nth-element within a [start:stop] range.
-        Optional. The default value is None.
-
-    :param copy_text_to_callback: If enabled and button_data is a string or integer,
-        function will copy button text to callback data (and add markers if they exist).
-        Optional. The default value is False.
-
-    :param add_to_keyboard: InlineKeyboardMarkup -
-        Keyboard to which the specified items will be added.
-        Optional. The default value is None.
-
-    :return: InlineKeyboardMarkup
-    """
-
-    keyboard = add_to_keyboard if add_to_keyboard else InlineKeyboardMarkup()
-
-    items = items[slice_start:slice_stop:slice_step]
-
-    if items is None:
-        return keyboard
-
-    if auto_alignment:
-        for divider in AUTO_ALIGNMENT_RANGE:
-            if not len(items) % divider:
-                items_in_line = divider
-                break
-
-    _keyboard_pre_check(items=items, items_in_line=items_in_line, keyboard=keyboard)
-
-    rows_in_keyboard = (len(items) // items_in_line)
-    buttons = [button_maker(
-        button_data=b_item,
-        front_marker=front_marker,
-        back_marker=back_marker,
-        copy_text_to_callback=copy_text_to_callback,
-    ) for b_item in items]
-
-    for _row in range(0, rows_in_keyboard):
-        keyboard.row(*[buttons.pop(0) for _button in range(0, items_in_line)])
-    keyboard.row(*buttons)
-
-    return keyboard
-
-
-def block_maker(
-        items: BlockItems = None,
-        front_marker: CallbackDataMarker = None,
-        back_marker: CallbackDataMarker = None,
-        copy_text_to_callback: bool = False,
-        add_to_keyboard: InlineKeyboardMarkup = None,
-) -> InlineKeyboardMarkup:
-    """
-    This function creates an InlineKeyboardMarkup
-    from a sequence of BlockItems elements.
-
-    :param items: InlineKeyboardItems -
-    Iterable collection of InlineButtonData elements.
-        Optional. The default value is None.
-
-    :param front_marker: CallbackDataMarker -
-    Callback data, which is common for all buttons.
-        Optional. The default value is None.
-
-    :param back_marker: CallbackDataMarker -
-    Callback data, which is common for all buttons.
-        Optional. The default value is empty string.
-
-    :param copy_text_to_callback: If enabled and button_data is a string or integer,
-        function will copy button text to callback data (and add markers if they exist).
-        Optional. The default value is False.
-
-    :param add_to_keyboard: InlineKeyboardMarkup -
-        Keyboard to which the specified items will be added.
-
-    :return: InlineKeyboardMarkup
-    """
 
     keyboard = add_to_keyboard if add_to_keyboard else InlineKeyboardMarkup()
 
@@ -339,23 +229,51 @@ def block_maker(
     if items and not isinstance(items, List):
         items = [items, ]
 
-    _keyboard_pre_check(items=items, keyboard=keyboard)
+    items = items[slice_start:slice_stop:slice_step] if items else items
+
+    _keyboa_pre_check(items=items, items_in_line=items_in_line, keyboard=keyboard)
+
+    if items_in_line or auto_alignment:
+
+        if auto_alignment:
+            for divider in AUTO_ALIGNMENT_RANGE:
+                if not len(items) % divider:
+                    items_in_line = divider
+                    break
+
+        items_in_line = items_in_line if items_in_line else DEFAULT_ITEMS_IN_LINE
+
+        rows_in_keyboard = (len(items) // items_in_line)
+        buttons = [button_maker(
+            button_data=item,
+            front_marker=front_marker,
+            back_marker=back_marker,
+            copy_text_to_callback=copy_text_to_callback,
+        ) for item in items]
+
+        for _row in range(0, rows_in_keyboard):
+            keyboard.row(*[buttons.pop(0) for _button in range(0, items_in_line)])
+        keyboard.row(*buttons)
+
+        return keyboard
 
     for index, item in enumerate(items):
         if not isinstance(item, list):
             items[index] = [item, ]
 
     for row in items:
-        keyboard.row(*[button_maker(
+        buttons = [button_maker(
             button_data=item,
             front_marker=front_marker,
             back_marker=back_marker,
             copy_text_to_callback=copy_text_to_callback
-        ) for item in row])
+        ) for item in row]
+        keyboard.row(*buttons)
+
     return keyboard
 
 
-def keyboard_combiner(
+def keyboa_combiner(
         keyboards: Optional[Union[Tuple[InlineKeyboardMarkup, ...], InlineKeyboardMarkup]] = None
 ) -> InlineKeyboardMarkup:
     """
@@ -386,4 +304,4 @@ def keyboard_combiner(
 
         data.extend(list(*keyboard.to_dic().values()))
 
-    return block_maker(data)
+    return keyboa_maker(data)
