@@ -4,13 +4,13 @@ from distutils.core import setup
 setup(
   name='keyboa',
   packages=['keyboa'],
-  version='2.0.0',
+  version='2.1.0',
   license='MIT',
   description="Telegram Inline Keyboards Generator",
   author='torrua',
   author_email='torrua@gmail.com',
   url='https://github.com/torrua/keyboa',
-  download_url='https://github.com/torrua/keyboa/archive/v2.0.0.tar.gz',
+  download_url='https://github.com/torrua/keyboa/archive/v2.1.0.tar.gz',
   keywords=['Generate', 'Inline', 'Keyboard', 'Telegram'],
   install_requires=[
           'pytelegrambotapi',
