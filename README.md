@@ -37,12 +37,13 @@ Also there is a ```CallbackDataMarker``` type for callback data:
 CallbackDataMarker = Optional[Union[str, int]]
 ```
 The function has following input parameters:
-| Parameter | Type | Description |
-| ------ | ------ | ------ |
-| ```button_data``` | InlineButtonData | An object from which the button will be created. _See detailed explanation below._ |
-| ```front_marker``` | CallbackDataMarker | _Optional_. An object to be added to the **left** side of callback. |
-| ```back_marker``` | CallbackDataMarker | _Optional_. An object to be added to the **right** side of callback.|
-| ```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist). The default value is ```False```. |
+
+Parameter | Type | Description
+--------- | ---- | -----------
+```button_data``` | InlineButtonData | An object from which the button will be created. _See detailed explanation below._
+```front_marker``` | CallbackDataMarker | _Optional_. An object to be added to the **left** side of callback.
+```back_marker``` | CallbackDataMarker | _Optional_. An object to be added to the **right** side of callback.
+```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist). The default value is ```False```.
 
 For ```button_data``` object --
 * If it is a ```str``` or an ```int```, it will be used for text (and callback, if ```copy_text_to_callback``` enabled).
@@ -111,18 +112,19 @@ StructuredSequence = List[Union[FlatSequence, InlineButtonData]]
 BlockItems = Union[StructuredSequence, InlineButtonData]
 ```
 The function has following input parameters:
-| Parameter | Type | Description |
-| ------ | ------ | ------ |
-| ```items``` | BlockItems | _Optional_. |
-| ```front_marker``` | CallbackDataMarker | _Optional_. Front part of callback data, which is common for all buttons. |
-| ```back_marker``` | CallbackDataMarker | _Optional_. Back part of callback data, which is common for all buttons. |
-| ```items_in_row``` | Integer | _Optional_. The number of buttons in one keyboard row. Must be **from one to eight** due to the Telegram Bot API limitation. The default value is ```None```, which means that by default the keyboard structure depends on the grouping of  ```items``` elements. |
-| ```auto_alignment``` | Boolean | If ```True```, will try to split all items into **equal rows in a range of 3 to 5**. This enabled option replaces the action of ```items_in_row``` variable, but if a suitable divisor cannot be found, function will use the ```items_in_row``` value. The default value is ```False```. |
-| ```slice_start``` | Integer | _Optional_. Refers to the index of the element which is used as a start of the slice. |
-| ```slice_stop``` | Integer | _Optional_. Refers to the index of the element we should stop just before to finish slice. |
-| ```slice_step``` | Integer | _Optional_. It allows you to take each nth-element within a ```[start:stop]``` range. |
-| ```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist). The default value is ```False```. |
-| ```add_to_keyboard``` | InlineKeyboardMarkup | _Optional_. You may pass the keyboard to which the specified items will be added. |
+
+Parameter | Type | Description
+--------- | ---- | -----------
+```items``` | BlockItems | _Optional_.
+```front_marker``` | CallbackDataMarker | _Optional_. Front part of callback data, which is common for all buttons.
+```back_marker``` | CallbackDataMarker | _Optional_. Back part of callback data, which is common for all buttons.
+```items_in_row``` | Integer | _Optional_. The number of buttons in one keyboard row. Must be **from one to eight** due to the Telegram Bot API limitation. The default value is ```None```, which means that by default the keyboard structure depends on the grouping of  ```items``` elements.
+```auto_alignment``` | Boolean | If ```True```, will try to split all items into **equal rows in a range of 3 to 5**. This enabled option replaces the action of ```items_in_row``` variable, but if a suitable divisor cannot be found, function will use the ```items_in_row``` value. The default value is ```False```.
+```slice_start``` | Integer | _Optional_. Refers to the index of the element which is used as a start of the slice.
+```slice_stop``` | Integer | _Optional_. Refers to the index of the element we should stop just before to finish slice.
+```slice_step``` | Integer | _Optional_. It allows you to take each nth-element within a ```[start:stop]``` range.
+```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist). The default value is ```False```.
+```add_to_keyboard``` | InlineKeyboardMarkup | _Optional_. You may pass the keyboard to which the specified items will be added.
 
 Let's start with a simple example!
 #### keyboard from ```list``` of ```str```
