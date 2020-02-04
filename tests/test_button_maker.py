@@ -38,7 +38,7 @@ def test_acceptable_button_source_types(button_data):
     :param button_data:
     :return:
     """
-    assert isinstance(button_maker(button_data=button_data), InlineKeyboardButton)
+    assert isinstance(button_maker(button_data=button_data, copy_text_to_callback=True), InlineKeyboardButton)
 
 
 @pytest.mark.parametrize("button_data", UNACCEPTABLE_BUTTON_SOURCE_TYPES)
