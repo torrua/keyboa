@@ -54,6 +54,7 @@ For ```button_data``` object --
 In all other cases the ```ValueError``` will be raised.
 
 Let's look at a few examples:
+
 #### button from ```str``` or ```int```
 ```python
 spam = button_maker(button_data="spam", copy_text_to_callback=True)
@@ -76,6 +77,7 @@ spam = button_maker(button_data="spam")
 ```sh
 ValueError: The callback data cannot be empty.
 ```
+
 #### button from ```tuple```
 ```python
 spam = button_maker(button_data=("spam", "eggs"), front_marker="ham_", back_marker="_spam")
@@ -84,6 +86,7 @@ spam = button_maker(button_data=("spam", "eggs"), front_marker="ham_", back_mark
 {'text': 'spam', 'callback_data': 'ham_eggs_spam'}
 ```
 💡 Notice that in this example we also used ```front_marker``` and ```back_marker``` to add some data to button's callback_data.
+
 #### button from ```dict``` without "text" key
 ```python
 spam = button_maker(button_data={"spam": "ham_eggs_spam"})
@@ -91,6 +94,7 @@ spam = button_maker(button_data={"spam": "ham_eggs_spam"})
 ```sh
 {'text': 'spam', 'callback_data': 'ham_eggs_spam'}
 ```
+
 #### button from ```dict``` with "text" key
 ```python
 spam = button_maker(button_data={"text": "spam", "url": "https://ya.ru/", "callback_data": "eggs"})
@@ -143,6 +147,7 @@ keyboard = keyboa_maker(items=menu, copy_text_to_callback=True)
 bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 ```
 ![keyboard from list of str](https://telegra.ph/file/2eb6752324fa196cae4ac.png)
+
 Now you see that the keyboard buttons are arranged according to how we grouped them in the list. 
 And of course you can create more complex structures, for example:
 ```python
@@ -161,6 +166,7 @@ keyboard = keyboa_maker(items=numbers, items_in_row=6, copy_text_to_callback=Tru
 bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 ```
 ![keyboard with 6 items_in_row](https://telegra.ph/file/2122cb9f50938b39b4439.png)
+
 💡 You can easily make 3, 4 or even 8 buttons in a row, changing the ```items_in_row``` parameter only.
 
 Now we will try to use more parameters to see how they will affect the result:
@@ -175,6 +181,7 @@ keyboard = keyboa_maker(
 bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 ```
 ![keyboard slice with auto_alignment](https://telegra.ph/file/cc41513058a2b3d9f83ba.png)
+
 As you can see, this keyboard consists of a ```[5:37]``` slice. In addition, although we did not specify the ```items_in_row``` parameter, the function divided list into equal rows, because of enabled ```auto_alignment``` parameter.
 
 ### Combine Keyboards
@@ -194,6 +201,7 @@ keyboard = keyboa_combiner(keyboards=(keyboard_tracks, keyboard_controls))
 bot.send_message(chat_id=user_id, text=text_tracks, reply_markup=keyboard)
 ```
 ![keyboard combo](https://telegra.ph/file/342c06d783faeb786f242.png)
+
 As you see, we merged two keyboards into one.
 
 ### Complex callbacks
@@ -212,6 +220,7 @@ kb_cities = keyboa_maker(
 bot.send_message(chat_id=user_id, text="Select your city:", reply_markup=kb_cities)
 ```
 ![keyboard cities](https://telegra.ph/file/dcd011c72e43aefd8d00d.png)
+
 By doing so, we get the following inside the keyboard:
 ```sh
 {'inline_keyboard': [
@@ -232,6 +241,7 @@ kb_streets = keyboa_maker(
 bot.send_message(chat_id=user_id, text="Select your street:", reply_markup=kb_streets)
 ```
 ![keyboard streets](https://telegra.ph/file/cf06e3bc0adece894535d.png)
+
 ```sh
 {'inline_keyboard': [
     [{
@@ -262,6 +272,7 @@ kb_apartments = keyboa_maker(
 bot.send_message(chat_id=user_id, text="Select your apartments:", reply_markup=kb_apartments)
 ```
 ![keyboard streets](https://telegra.ph/file/0eec50498f2a68955c81c.png)
+
 ```sh
 {'inline_keyboard': [[
         {'text': '221a',
