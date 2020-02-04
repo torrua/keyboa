@@ -92,7 +92,7 @@ def button_maker(
         button_data: InlineButtonData,
         front_marker: CallbackDataMarker = None,
         back_marker: CallbackDataMarker = None,
-        copy_text_to_callback: bool = True,
+        copy_text_to_callback: bool = False,
 ) -> InlineKeyboardButton:
     """
     This function creates an InlineKeyboardButton object from various data types,
@@ -118,7 +118,7 @@ def button_maker(
 
     :param copy_text_to_callback: If enabled and button_data is a string or integer,
         function will copy button text to callback data (and add markers if they exist).
-        Optional. The default value is True.
+        Optional. The default value is False.
 
     :return: InlineKeyboardButton
 
@@ -211,7 +211,7 @@ def keyboa_maker(
         front_marker: CallbackDataMarker = None,
         back_marker: CallbackDataMarker = None,
 
-        items_in_line: int = None,
+        items_in_row: int = None,
         auto_alignment: bool = False,
         slice_start: int = None,
         slice_stop: int = None,
@@ -231,19 +231,19 @@ def keyboa_maker(
 
     items = items[slice_start:slice_stop:slice_step] if items else items
 
-    _keyboa_pre_check(items=items, items_in_line=items_in_line, keyboard=keyboard)
+    _keyboa_pre_check(items=items, items_in_line=items_in_row, keyboard=keyboard)
 
-    if items_in_line or auto_alignment:
+    if items_in_row or auto_alignment:
 
         if auto_alignment:
             for divider in AUTO_ALIGNMENT_RANGE:
                 if not len(items) % divider:
-                    items_in_line = divider
+                    items_in_row = divider
                     break
 
-        items_in_line = items_in_line if items_in_line else DEFAULT_ITEMS_IN_LINE
+        items_in_row = items_in_row if items_in_row else DEFAULT_ITEMS_IN_LINE
 
-        rows_in_keyboard = (len(items) // items_in_line)
+        rows_in_keyboard = (len(items) // items_in_row)
         buttons = [button_maker(
             button_data=item,
             front_marker=front_marker,
@@ -252,7 +252,7 @@ def keyboa_maker(
         ) for item in items]
 
         for _row in range(0, rows_in_keyboard):
-            keyboard.row(*[buttons.pop(0) for _button in range(0, items_in_line)])
+            keyboard.row(*[buttons.pop(0) for _button in range(0, items_in_row)])
         keyboard.row(*buttons)
 
         return keyboard
