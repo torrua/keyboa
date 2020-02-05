@@ -40,16 +40,16 @@ The function has following input parameters:
 
 Parameter | Type | Description
 --------- | ---- | -----------
-```button_data``` | InlineButtonData | An object from which the button will be created. _See detailed explanation below._
+```button_data``` | InlineButtonData | An object from which the button will be created.<br>_See detailed explanation below._
 ```front_marker``` | CallbackDataMarker | _Optional_. An object to be added to the **left** side of callback.
 ```back_marker``` | CallbackDataMarker | _Optional_. An object to be added to the **right** side of callback.
-```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist). The default value is ```False```.
+```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist).<br>The default value is ```False```.
 
 For ```button_data``` object --
 * If it is a ```str``` or an ```int```, it will be used for text (and callback, if ```copy_text_to_callback``` enabled).
 * If it is a ```tuple```, the zero element [0] will be the text, and the first [1] will be the callback. 
 * If it is a ```dict```, there are two options:
-   * if there is **no "text" key** in dictionary and only one key exists, the key will be the text, and the value will be the callback. In this case no verification of the dictionary's contents is performed!
+   * if there is **no "text" key** in dictionary and only one key exists, the key will be the text, and the value will be the callback.<br>In this case no verification of the dictionary's contents is performed!
   * if the **"text" key exists**, function passes the whole dictionary to ```InlineKeyboardButton```, where dictionary's keys represent object's parameters and dictionary's values represent parameters' values accordingly.
 In all other cases the ```ValueError``` will be raised.
 
@@ -122,12 +122,12 @@ Parameter | Type | Description
 ```items``` | BlockItems | _Optional_.
 ```front_marker``` | CallbackDataMarker | _Optional_. Front part of callback data, which is common for all buttons.
 ```back_marker``` | CallbackDataMarker | _Optional_. Back part of callback data, which is common for all buttons.
-```items_in_row``` | Integer | _Optional_. The number of buttons in one keyboard row. Must be **from one to eight** due to the Telegram Bot API limitation. The default value is ```None```, which means that by default the keyboard structure depends on the grouping of  ```items``` elements.
-```auto_alignment``` | Boolean | If ```True```, will try to split all items into **equal rows in a range of 3 to 5**. This enabled option replaces the action of ```items_in_row``` variable, but if a suitable divisor cannot be found, function will use the ```items_in_row``` value. The default value is ```False```.
+```items_in_row``` | Integer | _Optional_. The number of buttons in one keyboard row. Must be **from one to eight** due to the Telegram Bot API limitation.<br>The default value is ```None```, which means that by default the keyboard structure depends on the grouping of  ```items``` elements.
+```auto_alignment``` | Boolean | If ```True```, will try to split all items into **equal rows in a range of 3 to 5**.<br>This enabled option replaces the action of ```items_in_row``` variable, but if a suitable divisor cannot be found, function will use the ```items_in_row``` value.<br>The default value is ```False```.
 ```slice_start``` | Integer | _Optional_. Refers to the index of the element which is used as a start of the slice.
 ```slice_stop``` | Integer | _Optional_. Refers to the index of the element we should stop just before to finish slice.
 ```slice_step``` | Integer | _Optional_. It allows you to take each nth-element within a ```[start:stop]``` range.
-```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist). The default value is ```False```.
+```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist).<br>The default value is ```False```.
 ```add_to_keyboard``` | InlineKeyboardMarkup | _Optional_. You may pass the keyboard to which the specified items will be added.
 
 Let's start with a simple example!
@@ -255,7 +255,7 @@ bot.send_message(chat_id=user_id, text="Select your street:", reply_markup=kb_st
         'callback_data': '&street=Abbey Road&city=London$'}]
 ]}
 ```
-💡 Notice that we used a ```front_marker``` to specify the type of current items, and a ```front_marker``` to attach existing information.
+💡 Notice that we used a ```front_marker``` to specify the type of current items, and a ```back_marker``` to attach existing information.
 
 As you can see, the variant selected by the user in the previous step was also saved.
 If the user selects a street, for example, ```Baker Street```, we will receive the ```call.data``` as ```'&street=Oxford Street&city=London$'```. Of course we are able to parse it easily.
