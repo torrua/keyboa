@@ -245,17 +245,17 @@ def keyboa_maker(
             elif not (isinstance(auto_alignment, Iterable)
                       and all(map(lambda s: isinstance(s, int), auto_alignment))):
                 type_error_message = \
-                    f"The auto_alignment variable has not a proper type. " \
-                    f"Only Iterable of integers or boolean type allowed.\n" \
-                    f"You may define it as 'True' to use AUTO_ALIGNMENT_RANGE."
+                    "The auto_alignment variable has not a proper type. " \
+                    "Only Iterable of integers or boolean type allowed.\n" \
+                    "You may define it as 'True' to use AUTO_ALIGNMENT_RANGE."
                 raise TypeError(type_error_message)
             elif max(auto_alignment) > MAXIMUM_ITEMS_IN_LINE \
                     or min(auto_alignment) < MINIMUM_ITEMS_IN_LINE:
                 value_error_message = \
-                    f"The auto_alignment's item values should be between " \
-                    f"{MINIMUM_ITEMS_IN_LINE} and {MAXIMUM_ITEMS_IN_LINE}. " \
-                    f"You entered: {auto_alignment}\n" \
-                    f"You may define it as 'True' to use AUTO_ALIGNMENT_RANGE."
+                    "The auto_alignment's item values should be between " \
+                    "%s and %s. You entered: %s\n" \
+                    "You may define it as 'True' to use AUTO_ALIGNMENT_RANGE." \
+                    % (MINIMUM_ITEMS_IN_LINE, MAXIMUM_ITEMS_IN_LINE, auto_alignment)
                 raise ValueError(value_error_message)
             else:
                 alignment_range = auto_alignment
