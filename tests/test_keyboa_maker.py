@@ -8,8 +8,8 @@ import sys
 sys.path.insert(0, "%s/../" % os.path.dirname(os.path.abspath(__file__)))
 
 import pytest
-from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from keyboa.keyboards import keyboa_maker
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 def test_pass_none():

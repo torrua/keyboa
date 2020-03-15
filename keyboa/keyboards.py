@@ -4,7 +4,8 @@ This module contains all the necessary functions for
 creating complex and functional inline keyboards.
 """
 
-from typing import Union, List, Optional, Tuple, Dict
+from collections.abc import Iterable
+from typing import Union, List, Optional, Tuple
 
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
@@ -24,13 +25,15 @@ StructuredSequence = List[Union[FlatSequence, InlineButtonData]]
 # unified type that allows you to use any available data types for the keyboard
 BlockItems = Union[StructuredSequence, InlineButtonData]
 
-DEFAULT_ITEMS_IN_LINE = 1
+MAXIMUM_ITEMS_IN_LINE = 8
+MINIMUM_ITEMS_IN_LINE = 1
+DEFAULT_ITEMS_IN_LINE = MINIMUM_ITEMS_IN_LINE
 AUTO_ALIGNMENT_RANGE = range(3, 6)
 
 
 def _keyboa_pre_check(
         items: BlockItems = None,
-        items_in_line: int = None,
+        items_in_row: int = None,
         keyboard: InlineKeyboardMarkup = None) -> None:
     """
     This function checks whether the keyboard parameters are beyond Telegram limits or not.
@@ -38,7 +41,7 @@ def _keyboa_pre_check(
     :param items: InlineRowItems - Sequence of elements with optional structure,
         where each top-level item will be a row with one or several buttons.
 
-    :param items_in_line: int - Desired number of buttons in one row. Should be from 1 to 8.
+    :param items_in_row: int - Desired number of buttons in one row. Should be from 1 to 8.
         Optional. The default value is None.
 
     :param keyboard: InlineKeyboardMarkup object to which we will attach the list items.
@@ -83,9 +86,9 @@ def _keyboa_pre_check(
                          (items_in_keyboard_allowed_range[-1], expecting_items_number))
 
     items_in_line_allowed_range = range(1, 9)  # Telegram limitation
-    if items_in_line is not None and items_in_line not in items_in_line_allowed_range:
+    if items_in_row is not None and items_in_row not in items_in_line_allowed_range:
         raise ValueError(value_error_message_line %
-                         (items_in_line_allowed_range[-1], items_in_line))
+                         (items_in_line_allowed_range[-1], items_in_row))
 
 
 def button_maker(
@@ -194,13 +197,13 @@ def _button_data_extractor(button_data: Union[tuple, dict]) -> (str, str):
     raw_text = button_data[0]
     if not isinstance(raw_text, ButtonText.__args__):
         type_error_message = "Button text cannot be %s. Only %s allowed." \
-            % (type(raw_text), ButtonText)
+                             % (type(raw_text), ButtonText)
         raise TypeError(type_error_message)
     text = str(raw_text)
     raw_callback = button_data[1]
     if not isinstance(raw_callback, CallbackDataMarker.__args__):
         type_error_message = "Callback cannot be %s. Only %s allowed." \
-            % (type(raw_callback), CallbackDataMarker)
+                             % (type(raw_callback), CallbackDataMarker)
         raise TypeError(type_error_message)
     callback = str(raw_callback)
     return text, callback
@@ -212,7 +215,8 @@ def keyboa_maker(
         back_marker: CallbackDataMarker = None,
 
         items_in_row: int = None,
-        auto_alignment: bool = False,
+        auto_alignment: Union[bool, Iterable] = False,
+        reverse_alignment_range: bool = False,
         slice_start: int = None,
         slice_stop: int = None,
         slice_step: int = None,
@@ -220,7 +224,6 @@ def keyboa_maker(
         copy_text_to_callback: bool = False,
         add_to_keyboard: InlineKeyboardMarkup = None,
 ) -> InlineKeyboardMarkup:
-
     keyboard = add_to_keyboard if add_to_keyboard else InlineKeyboardMarkup()
 
     if items is None:
@@ -231,12 +234,36 @@ def keyboa_maker(
 
     items = items[slice_start:slice_stop:slice_step] if items else items
 
-    _keyboa_pre_check(items=items, items_in_line=items_in_row, keyboard=keyboard)
+    _keyboa_pre_check(items=items, items_in_row=items_in_row, keyboard=keyboard)
 
     if items_in_row or auto_alignment:
 
         if auto_alignment:
-            for divider in AUTO_ALIGNMENT_RANGE:
+
+            if isinstance(auto_alignment, bool):
+                alignment_range = AUTO_ALIGNMENT_RANGE
+            elif not (isinstance(auto_alignment, Iterable)
+                      and all(map(lambda s: isinstance(s, int), auto_alignment))):
+                type_error_message = \
+                    f"The auto_alignment variable has not a proper type. " \
+                    f"Only Iterable of integers or boolean type allowed.\n" \
+                    f"You may define it as 'True' to use AUTO_ALIGNMENT_RANGE."
+                raise TypeError(type_error_message)
+            elif max(auto_alignment) > MAXIMUM_ITEMS_IN_LINE \
+                    or min(auto_alignment) < MINIMUM_ITEMS_IN_LINE:
+                value_error_message = \
+                    f"The auto_alignment's item values should be between " \
+                    f"{MINIMUM_ITEMS_IN_LINE} and {MAXIMUM_ITEMS_IN_LINE}. " \
+                    f"You entered: {auto_alignment}\n" \
+                    f"You may define it as 'True' to use AUTO_ALIGNMENT_RANGE."
+                raise ValueError(value_error_message)
+            else:
+                alignment_range = auto_alignment
+
+            if reverse_alignment_range:
+                alignment_range = reversed(alignment_range)
+
+            for divider in alignment_range:
                 if not len(items) % divider:
                     items_in_row = divider
                     break

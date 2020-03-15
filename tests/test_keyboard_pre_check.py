@@ -33,7 +33,7 @@ def test_unacceptable_number_in_line(number_in_line):
     with pytest.raises(Exception) as _:
         _keyboa_pre_check(
             items=list(range(0, 50)),
-            items_in_line=number_in_line, )
+            items_in_row=number_in_line, )
 
 
 @pytest.mark.parametrize("number_in_line", (1, 8, None))
@@ -45,7 +45,7 @@ def test_acceptable_number_in_line(number_in_line):
     """
     assert _keyboa_pre_check(
         items=list(range(0, 50)),
-        items_in_line=number_in_line, ) is None
+        items_in_row=number_in_line, ) is None
 
 
 def test_count_items_with_existing_keyboard():
