@@ -1,2 +1,2 @@
-pyTelegramBotAPI==3.6.7
+pyTelegramBotAPI==3.7.1
 pytest==5.4.1
