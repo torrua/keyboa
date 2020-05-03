@@ -1,9 +1,14 @@
-from distutils.core import setup
+# !/usr/bin/env python
+# from distutils.core import setup
+from io import open
 
-from os import path
-this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
+from setuptools import setup
+
+
+def read(filename):
+    with open(filename, encoding='utf-8') as file:
+        return file.read()
+
 
 setup(
   name='keyboa',
@@ -11,7 +16,7 @@ setup(
   version='2.2.3',
   license='MIT',
   description="Telegram Inline Keyboards Generator",
-  long_description=long_description,
+  long_description=read("README.md"),
   long_description_content_type="text/markdown",
   author='torrua',
   author_email='torrua@gmail.com',
