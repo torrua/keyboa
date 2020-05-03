@@ -191,3 +191,11 @@ def test_empty_callback_data():
     """
     with pytest.raises(Exception) as _:
         button_maker(button_data=("button_text", ""), copy_text_to_callback=False)
+
+
+def test_big_callback_data():
+    """
+    :return:
+    """
+    with pytest.raises(Exception) as _:
+        button_maker(button_data=("button_text", "limit"*13), copy_text_to_callback=False)

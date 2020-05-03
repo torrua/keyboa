@@ -183,6 +183,11 @@ def button_maker(
     if not callback_data:
         raise ValueError("The callback data cannot be empty.")
 
+    if len(callback_data.encode()) > 64:
+        size_error_message = "The callback data cannot be more than " \
+                             "64 bytes for one button. Your size is %s" % len(callback_data.encode())
+        raise ValueError(size_error_message)
+
     prepared_button = {"text": text, "callback_data": callback_data if callback_data else None}
 
     return InlineKeyboardButton(**prepared_button)
