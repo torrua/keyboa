@@ -56,7 +56,7 @@ def _keyboa_pre_check(
     if items is None:
         return
 
-    if items and not isinstance(items, List):
+    if items and not isinstance(items, list):
         items = [items, ]
 
     if keyboard and not isinstance(keyboard, InlineKeyboardMarkup):
@@ -159,7 +159,7 @@ def button_maker(
     elif isinstance(button_data, dict):
         if button_data.get("text", None):
             return InlineKeyboardButton(**button_data)
-        elif len(button_data.keys()) == 1:
+        if len(button_data.keys()) == 1:
             text, callback = _button_data_extractor(next(iter(button_data.items())))
         else:
             value_type_error = \
@@ -185,7 +185,8 @@ def button_maker(
 
     if len(callback_data.encode()) > 64:
         size_error_message = "The callback data cannot be more than " \
-                             "64 bytes for one button. Your size is %s" % len(callback_data.encode())
+                             "64 bytes for one button. Your size is %s" \
+                             % len(callback_data.encode())
         raise ValueError(size_error_message)
 
     prepared_button = {"text": text, "callback_data": callback_data if callback_data else None}
@@ -229,12 +230,26 @@ def keyboa_maker(
         copy_text_to_callback: bool = False,
         add_to_keyboard: InlineKeyboardMarkup = None,
 ) -> InlineKeyboardMarkup:
+    """
+    :param items:
+    :param front_marker:
+    :param back_marker:
+    :param items_in_row:
+    :param auto_alignment:
+    :param reverse_alignment_range:
+    :param slice_start:
+    :param slice_stop:
+    :param slice_step:
+    :param copy_text_to_callback:
+    :param add_to_keyboard:
+    :return:
+    """
     keyboard = add_to_keyboard if add_to_keyboard else InlineKeyboardMarkup()
 
     if items is None:
         return keyboard
 
-    if items and not isinstance(items, List):
+    if items and not isinstance(items, list):
         items = [items, ]
 
     items = items[slice_start:slice_stop:slice_step] if items else items
