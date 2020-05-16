@@ -68,25 +68,25 @@ def _keyboa_pre_check(
     # We need to count existing buttons too if we passed keyboard object to the function
     if keyboard:
         keyboard_items = keyboard.__dict__['keyboard']
-        current_keyboard_items_number = sum([len(row) for row in keyboard_items])
+        current_keyboard_items_number = sum(len(row) for row in keyboard_items)
         expecting_items_number = len(items) + current_keyboard_items_number
     else:
         expecting_items_number = len(items)
 
-    value_error_message_keyboard = \
-        "Telegram Bot API limit exceeded: The keyboard should have " \
-        "from 1 to %s buttons at all. Your total amount is %s."
-    value_error_message_line = \
-        "Telegram Bot API limit exceeded: " \
-        "The keyboard line should have from 1 to %s buttons. You entered %s."
-
     items_in_keyboard_allowed_range = range(1, 101)  # Telegram limitation
     if expecting_items_number not in items_in_keyboard_allowed_range:
+        value_error_message_keyboard = \
+            "Telegram Bot API limit exceeded: The keyboard should have " \
+            "from 1 to %s buttons at all. Your total amount is %s."
         raise ValueError(value_error_message_keyboard %
                          (items_in_keyboard_allowed_range[-1], expecting_items_number))
 
     items_in_line_allowed_range = range(1, 9)  # Telegram limitation
     if items_in_row is not None and items_in_row not in items_in_line_allowed_range:
+        value_error_message_line = \
+            "Telegram Bot API limit exceeded: " \
+            "The keyboard line should have from 1 to %s buttons. You entered %s."
+
         raise ValueError(value_error_message_line %
                          (items_in_line_allowed_range[-1], items_in_row))
 
