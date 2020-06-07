@@ -125,9 +125,9 @@ Parameter | Type | Description
 ```items_in_row``` | Integer | _Optional_. The number of buttons in one keyboard row. Must be **from one to eight** due to the Telegram Bot API limitation.<br>The default value is ```None```, which means that by default the keyboard structure depends on the grouping of  ```items``` elements.
 ```auto_alignment``` | Boolean or Iterable | If ```True```, will try to split all items into **equal rows in a range of 3 to 5**.<br>If ```Iterable``` (with any ```int``` in the range from 1 to 8), will try to use it.<br>This enabled option replaces the action of ```items_in_row``` variable, but if a suitable divisor cannot be found, function will use the ```items_in_row``` value.<br>The default value is ```False```.
 ```reverse_alignment_range``` | Boolean | If ```True```, will try to find the divisor starting from the end of the ```auto_alignment``` variable (if defined) or from the default range.<br>This enabled option works only if ```auto_alignment``` is enabled.<br>The default value is ```False```.
-```slice_start``` | Integer | _Optional_. Refers to the index of the element which is used as a start of the slice, i.e define **start** position in ```[start:stop:step]``` range.
-```slice_stop``` | Integer | _Optional_. Refers to the index of the element we should stop just before to finish slice, i.e define **stop** position in ```[start:stop:step]``` range.
-```slice_step``` | Integer | _Optional_. It allows you to take each nth-element within a ```[start:stop]``` range, i.e define **step** position in ```[start:stop:step]``` range.
+```slice_start``` | Integer | _Optional_. Refers to the index of the element which is used as a start of the slice, i.e defines **start** position in ```[start:stop:step]``` range.
+```slice_stop``` | Integer | _Optional_. Refers to the index of the element we should stop just before to finish slice, i.e defines **stop** position in ```[start:stop:step]``` range.
+```slice_step``` | Integer | _Optional_. It allows you to take each nth-element within range, i.e defines **step** position in ```[start:stop:step]``` range.
 ```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist).<br>The default value is ```False```.
 ```add_to_keyboard``` | InlineKeyboardMarkup | _Optional_. You may pass the keyboard to which the specified items will be added.
 
