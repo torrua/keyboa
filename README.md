@@ -1,5 +1,5 @@
 # Keyboa
-[![Download Keyboa](https://img.shields.io/pypi/v/keyboa.svg)](https://pypi.python.org/pypi/keyboa) [![Build Status](https://travis-ci.com/torrua/keyboa.svg?branch=master)](https://travis-ci.com/torrua/keyboa)
+[![Download Keyboa](https://img.shields.io/pypi/v/keyboa.svg)](https://pypi.python.org/pypi/keyboa) [![Build Status](https://travis-ci.com/torrua/keyboa.svg?branch=master)](https://travis-ci.com/torrua/keyboa) ![CodeQL](https://github.com/torrua/keyboa/workflows/CodeQL/badge.svg?branch=master)
 
 This is a simple but flexible inline keyboard generator that works as an add-on to PyTelegramBotAPI package. With **keyboa** you can:
 - quickly create buttons with complex callback, 
