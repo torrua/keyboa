@@ -298,8 +298,8 @@ def keyboa_maker(
             copy_text_to_callback=copy_text_to_callback,
         ) for item in items]
 
-        for _row in range(0, rows_in_keyboard):
-            keyboard.row(*[buttons.pop(0) for _button in range(0, items_in_row)])
+        for _row in range(rows_in_keyboard):
+            keyboard.row(*[buttons.pop(0) for _button in range(items_in_row)])
         keyboard.row(*buttons)
 
         return keyboard
