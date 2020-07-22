@@ -349,6 +349,6 @@ def keyboa_combiner(
                 % type(keyboard)
             raise TypeError(type_error_message)
 
-        data.extend(list(*keyboard.to_dic().values()))
+        data.extend(keyboard.keyboard)
 
     return keyboa_maker(data)
