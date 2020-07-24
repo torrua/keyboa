@@ -13,8 +13,11 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 InlineButtonData = Union[str, int, tuple, dict, InlineKeyboardButton]
 
-ButtonText = Union[str, int]
-CallbackDataMarker = Optional[Union[str, int]]
+button_text_types = (str, int)
+ButtonText = Union[button_text_types]
+
+callback_data_types = (str, int, type(None))
+CallbackDataMarker = Union[callback_data_types]
 
 # structureless sequence of InlineButtonData objects
 FlatSequence = List[InlineButtonData]
@@ -134,13 +137,13 @@ def button_maker(
     if back_marker is None:
         back_marker = ""
 
-    if not isinstance(front_marker, CallbackDataMarker.__args__):
+    if not isinstance(front_marker, callback_data_types):
         type_error_message = \
             "Marker could not have %s type. Only %s allowed." \
             % (type(front_marker), CallbackDataMarker)
         raise TypeError(type_error_message)
 
-    if not isinstance(back_marker, CallbackDataMarker.__args__):
+    if not isinstance(back_marker, callback_data_types):
         type_error_message = \
             "Marker could not have %s type. Only %s allowed." \
             % (type(back_marker), CallbackDataMarker)
@@ -201,15 +204,16 @@ def _button_data_extractor(button_data: Union[tuple, dict]) -> (str, str):
     :return: str, str - button text and callback
     """
     raw_text = button_data[0]
-    if not isinstance(raw_text, ButtonText.__args__):
+    if not isinstance(raw_text, button_text_types):
         type_error_message = "Button text cannot be %s. Only %s allowed." \
                              % (type(raw_text), ButtonText)
         raise TypeError(type_error_message)
     text = str(raw_text)
     raw_callback = button_data[1]
-    if not isinstance(raw_callback, CallbackDataMarker.__args__):
+
+    if not isinstance(raw_callback, callback_data_types):
         type_error_message = "Callback cannot be %s. Only %s allowed." \
-                             % (type(raw_callback), CallbackDataMarker)
+                             % (type(raw_callback), callback_data_types)
         raise TypeError(type_error_message)
     callback = str(raw_callback)
     return text, callback
