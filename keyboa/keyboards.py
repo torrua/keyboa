@@ -69,12 +69,15 @@ def _keyboa_pre_check(
         raise TypeError(type_error_message)
 
     # We need to count existing buttons too if we passed keyboard object to the function
+    total_items_number = sum(
+        len(row) if isinstance(row, (list, tuple, set)) else 1 for row in items)
+
     if keyboard:
         keyboard_items = keyboard.__dict__['keyboard']
         current_keyboard_items_number = sum(len(row) for row in keyboard_items)
-        expecting_items_number = len(items) + current_keyboard_items_number
+        expecting_items_number = total_items_number + current_keyboard_items_number
     else:
-        expecting_items_number = len(items)
+        expecting_items_number = total_items_number
 
     items_in_keyboard_allowed_range = range(1, 101)  # Telegram limitation
     if expecting_items_number not in items_in_keyboard_allowed_range:

@@ -23,6 +23,17 @@ def test_acceptable_number_of_passed_elements():
         _keyboa_pre_check(items=list(range(101)))
 
 
+def test_acceptable_number_of_nested_elements():
+    """
+
+    :return:
+    """
+    range_105 = [list(range(0, 7)) for i in range(0, 15)]
+
+    with pytest.raises(Exception) as _:
+        _keyboa_pre_check(items=range_105)
+
+
 @pytest.mark.parametrize("number_in_line", (0, 9))
 def test_unacceptable_number_in_line(number_in_line):
     """

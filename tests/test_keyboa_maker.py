@@ -79,13 +79,14 @@ def test_pass_structure():
     :return:
     """
     result = keyboa_maker(
-        items=[list(range(4)), list(range(2, 5)), "string"],
+        items=[list(range(4)), list(range(2, 5)), "string", {"t": "cbd"}],
         front_marker="STRUCTURE_",
         copy_text_to_callback=True,
     )
 
     assert isinstance(result, InlineKeyboardMarkup)
-    assert len(result.__dict__["keyboard"]) == 3
+    assert len(result.__dict__["keyboard"]) == 4
     assert result.__dict__["keyboard"][0][0]["callback_data"] == "STRUCTURE_0"
     assert result.__dict__["keyboard"][1][0]["callback_data"] == "STRUCTURE_2"
     assert result.__dict__["keyboard"][2][0]["callback_data"] == "STRUCTURE_string"
+    assert result.__dict__["keyboard"][3][0]["callback_data"] == "STRUCTURE_cbd"
