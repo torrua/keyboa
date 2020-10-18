@@ -30,6 +30,9 @@ There are **three main functions** which return ```InlineKeyboardButton``` or ``
 
 Let's take it in detail.
 ### How to create Button
+💡 There is usually no need to create separate buttons as they will be created automatically from their source data when the keyboard is created.
+But if there is such a need, it can be done as follows.
+
 The ```button_maker()``` function creates an ```InlineKeyboardButton``` object from various data types, such as ```str```, ```int```, ```tuple```, ```dict```. You can also pass the ```InlineKeyboardButton``` object itself, which will return unchanged.
 
 All acceptable types combined into ```InlineButtonData``` type:

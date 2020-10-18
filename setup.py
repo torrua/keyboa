@@ -13,7 +13,7 @@ def read(filename):
 setup(
   name='keyboa',
   packages=['keyboa'],
-  version='2.2.5',
+  version='2.2.6',
   license='MIT',
   description="Telegram Inline Keyboards Generator",
   long_description=read("README.md"),
@@ -21,7 +21,7 @@ setup(
   author='torrua',
   author_email='torrua@gmail.com',
   url='https://github.com/torrua/keyboa',
-  download_url='https://github.com/torrua/keyboa/archive/v2.2.5.tar.gz',
+  download_url='https://github.com/torrua/keyboa/archive/v2.2.6.tar.gz',
   keywords=['Generate', 'Inline', 'Keyboard', 'Telegram'],
   install_requires=[
           'pytelegrambotapi',
@@ -35,5 +35,6 @@ setup(
     'Programming Language :: Python :: 3.6',
     'Programming Language :: Python :: 3.7',
     'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
   ],
 )
