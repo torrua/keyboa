@@ -1,2 +1,1 @@
 pyTelegramBotAPI>=3.6.6
-pytest>=5.4.1

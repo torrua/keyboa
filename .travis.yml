@@ -1,14 +1,19 @@
+sudo: false
 language: python
 python:
   - "3.5"
   - "3.6"
   - "3.7"
   - "3.8"
-  - "3.9-dev"
+  - "3.9"
+  - "3.10-dev"
   - "nightly"
 # command to install dependencies
 install:
-  - pip install -r requirements.txt
+  - pip install -r requirements-test.txt
 # command to run tests
 script:
-  - pytest tests/
+  - pytest --cov=keyboa tests/
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
