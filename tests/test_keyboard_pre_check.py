@@ -12,6 +12,14 @@ from keyboa.keyboards import _keyboa_pre_check
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
+def test_precheck_with_nothing():
+    assert _keyboa_pre_check(items=None) is None
+
+
+def test_precheck_with_no_list():
+    assert _keyboa_pre_check(items=1) is None
+
+
 def test_acceptable_number_of_passed_elements():
     """
 
