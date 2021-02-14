@@ -99,8 +99,8 @@ def _keyboa_pre_check(
 
 def button_maker(
         button_data: InlineButtonData,
-        front_marker: CallbackDataMarker = None,
-        back_marker: CallbackDataMarker = None,
+        front_marker: CallbackDataMarker = str(),
+        back_marker: CallbackDataMarker = str(),
         copy_text_to_callback: bool = False,
 ) -> InlineKeyboardButton:
     """
@@ -134,57 +134,44 @@ def button_maker(
     Covered by tests.
     """
 
-    if front_marker is None:
-        front_marker = ""
-
-    if back_marker is None:
-        back_marker = ""
-
-    if not isinstance(front_marker, callback_data_types):
-        type_error_message = \
-            "Marker could not have %s type. Only %s allowed." \
-            % (type(front_marker), CallbackDataMarker)
-        raise TypeError(type_error_message)
-
-    if not isinstance(back_marker, callback_data_types):
-        type_error_message = \
-            "Marker could not have %s type. Only %s allowed." \
-            % (type(back_marker), CallbackDataMarker)
-        raise TypeError(type_error_message)
-
     if isinstance(button_data, InlineKeyboardButton):
         return button_data
 
-    if isinstance(button_data, (str, int)):
-        text = str(button_data)
-        callback = str(button_data) if copy_text_to_callback else ""
+    if isinstance(button_data, dict) and button_data.get("text"):
+        return InlineKeyboardButton(**button_data)
 
-    elif isinstance(button_data, tuple):
-        text, callback = _button_data_extractor(button_data)
+    button_tuple = get_button_tuple(button_data, copy_text_to_callback)
 
-    elif isinstance(button_data, dict):
-        if button_data.get("text", None):
-            return InlineKeyboardButton(**button_data)
-        if len(button_data.keys()) == 1:
-            text, callback = _button_data_extractor(next(iter(button_data.items())))
-        else:
-            value_type_error = \
-                "Cannot convert dictionary to InlineButtonData object. " \
-                "You passed more than one item, but did not add 'text' key." % button_data
-            raise ValueError(value_type_error)
+    text = get_text(button_tuple)
+    raw_callback = get_callback(button_tuple)
+    callback_data = get_callback_data(raw_callback, front_marker, back_marker)
 
-    else:
-        type_error_message = \
-            "Cannot create %s from %s. Please use %s instead.\n" \
-            "Probably you specified 'auto_alignment' or 'items_in_line' " \
-            "parameter for StructuredSequence." \
-            % (InlineKeyboardButton, type(button_data), InlineButtonData)
-        raise TypeError(type_error_message)
+    prepared_button = {"text": text, "callback_data": callback_data}
 
-    if not text:
-        raise ValueError("Button text cannot be empty.")
+    return InlineKeyboardButton(**prepared_button)
 
-    callback_data = "%s%s%s" % (front_marker, callback, back_marker)
+
+def get_callback_data(
+        raw_callback: CallbackDataMarker,
+        front_marker: CallbackDataMarker = str(),
+        back_marker: CallbackDataMarker = str()) -> str:
+    """
+    :param raw_callback:
+    :param front_marker:
+    :param back_marker:
+    :return:
+    """
+    if front_marker is None:
+        front_marker = str()
+    if back_marker is None:
+        back_marker = str()
+    for marker in (front_marker, back_marker):
+        if not isinstance(marker, callback_data_types):
+            type_error_message = \
+                "Marker could not have %s type. Only %s allowed." \
+                % (type(marker), CallbackDataMarker)
+            raise TypeError(type_error_message)
+    callback_data = "%s%s%s" % (front_marker, raw_callback, back_marker)
 
     if not callback_data:
         raise ValueError("The callback data cannot be empty.")
@@ -195,16 +182,26 @@ def button_maker(
                              % len(callback_data.encode())
         raise ValueError(size_error_message)
 
-    prepared_button = {"text": text, "callback_data": callback_data if callback_data else None}
-
-    return InlineKeyboardButton(**prepared_button)
+    return callback_data
 
 
-def _button_data_extractor(button_data: Union[tuple, dict]) -> (str, str):
+def get_callback(button_data: tuple) -> str:
     """
-    This small function extract button text and callback from passed object and make a check.
-    :param button_data: Union[tuple, dict] - as a part of InlineButtonData type.
-    :return: str, str - button text and callback
+    :param button_data:
+    :return:
+    """
+    callback = button_data[1]
+    if not isinstance(callback, callback_data_types):
+        type_error_message = "Callback cannot be %s. Only %s allowed." \
+                             % (type(callback), callback_data_types)
+        raise TypeError(type_error_message)
+    return callback
+
+
+def get_text(button_data: tuple) -> str:
+    """
+    :param button_data:
+    :return:
     """
     raw_text = button_data[0]
     if not isinstance(raw_text, button_text_types):
@@ -212,14 +209,41 @@ def _button_data_extractor(button_data: Union[tuple, dict]) -> (str, str):
                              % (type(raw_text), ButtonText)
         raise TypeError(type_error_message)
     text = str(raw_text)
-    raw_callback = button_data[1]
+    if not text:
+        raise ValueError("Button text cannot be empty.")
+    return text
 
-    if not isinstance(raw_callback, callback_data_types):
-        type_error_message = "Callback cannot be %s. Only %s allowed." \
-                             % (type(raw_callback), callback_data_types)
+
+def get_button_tuple(button_data: InlineButtonData, copy_text_to_callback: bool) -> tuple:
+    """
+    :param button_data:
+    :param copy_text_to_callback:
+    :return:
+    """
+    if not isinstance(button_data, (tuple, dict, str, int)):
+        type_error_message = \
+            "Cannot create %s from %s. Please use %s instead.\n" \
+            "Probably you specified 'auto_alignment' or 'items_in_line' " \
+            "parameter for StructuredSequence." \
+            % (InlineKeyboardButton, type(button_data), InlineButtonData)
         raise TypeError(type_error_message)
-    callback = str(raw_callback)
-    return text, callback
+    if isinstance(button_data, (str, int)):
+        btn_tuple = button_data, button_data if copy_text_to_callback else str()
+
+    elif isinstance(button_data, dict):
+        if len(button_data.keys()) != 1:
+            value_type_error = \
+                "Cannot convert dictionary to InlineButtonData object. " \
+                "You passed more than one item, but did not add 'text' key."
+            raise ValueError(value_type_error)
+
+        btn_tuple = next(iter(button_data.items()))
+    else:
+        btn_tuple = button_data
+
+    if len(btn_tuple) == 1 or btn_tuple[1] is None:
+        btn_tuple = btn_tuple[0], btn_tuple[0] if copy_text_to_callback else str()
+    return btn_tuple
 
 
 def keyboa_maker(

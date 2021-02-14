@@ -11,12 +11,17 @@ import pytest
 from telebot.types import InlineKeyboardButton
 from keyboa.keyboards import button_maker
 
-ACCEPTABLE_BUTTON_SOURCE_TYPES = (
+BUTTON_SOURCE_TYPES_ACCEPTABLE_WITH_COPY_TO_CALLBACK = (
     2, "a", "2", {2: "a", }, {"a": 2, },
     (2, "a"), ("a", 2), ("a", None),
 )
+
+BUTTON_SOURCE_TYPES_UNACCEPTABLE_WITHOUT_COPY_TO_CALLBACK = (
+    2, "a", "2", ("a", None),
+)
+
 UNACCEPTABLE_BUTTON_SOURCE_TYPES = (
-    {2, "a"}, {"a", 2}, [2, "a"],
+    {2, "a"}, {"a", 2}, [2, "a"], (2, dict()),
     ["a", 2], (None, 2), (None, None), None,
 )
 COMBO_BUTTON_DATA = (
@@ -31,7 +36,7 @@ UNACCEPTABLE_BUTTON_TEXTS = [
 STRING_INT = ["12345", 12345]
 
 
-@pytest.mark.parametrize("button_data", ACCEPTABLE_BUTTON_SOURCE_TYPES)
+@pytest.mark.parametrize("button_data", BUTTON_SOURCE_TYPES_ACCEPTABLE_WITH_COPY_TO_CALLBACK)
 def test_acceptable_button_source_types(button_data):
     """
 
@@ -41,6 +46,19 @@ def test_acceptable_button_source_types(button_data):
     assert isinstance(button_maker(
         button_data=button_data,
         copy_text_to_callback=True), InlineKeyboardButton)
+
+
+@pytest.mark.parametrize("button_data", BUTTON_SOURCE_TYPES_UNACCEPTABLE_WITHOUT_COPY_TO_CALLBACK)
+def test_acceptable_button_source_types(button_data):
+    """
+
+    :param button_data:
+    :return:
+    """
+    with pytest.raises(Exception) as _:
+        button_maker(
+            button_data=button_data,
+            copy_text_to_callback=False)
 
 
 @pytest.mark.parametrize("button_data", UNACCEPTABLE_BUTTON_SOURCE_TYPES)
