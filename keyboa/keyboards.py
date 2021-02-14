@@ -288,57 +288,29 @@ def keyboa_maker(
     _keyboa_pre_check(items=items, items_in_row=items_in_row, keyboard=keyboard)
 
     if items_in_row or auto_alignment:
+        return get_generated_keyboard(
+            items, front_marker, back_marker, items_in_row, auto_alignment,
+            reverse_alignment_range, copy_text_to_callback, keyboard)
 
-        if auto_alignment:
+    return get_preformatted_keyboard(
+        items, front_marker, back_marker,
+        copy_text_to_callback, keyboard)
 
-            if isinstance(auto_alignment, bool):
-                alignment_range = AUTO_ALIGNMENT_RANGE
-            elif not (isinstance(auto_alignment, Iterable)
-                      and all(map(lambda s: isinstance(s, int), auto_alignment))):
-                type_error_message = \
-                    "The auto_alignment variable has not a proper type. " \
-                    "Only Iterable of integers or boolean type allowed.\n" \
-                    "You may define it as 'True' to use AUTO_ALIGNMENT_RANGE."
-                raise TypeError(type_error_message)
-            elif max(auto_alignment) > MAXIMUM_ITEMS_IN_LINE \
-                    or min(auto_alignment) < MINIMUM_ITEMS_IN_LINE:
-                value_error_message = \
-                    "The auto_alignment's item values should be between " \
-                    "%s and %s. You entered: %s\n" \
-                    "You may define it as 'True' to use AUTO_ALIGNMENT_RANGE." \
-                    % (MINIMUM_ITEMS_IN_LINE, MAXIMUM_ITEMS_IN_LINE, auto_alignment)
-                raise ValueError(value_error_message)
-            else:
-                alignment_range = auto_alignment
 
-            if reverse_alignment_range:
-                alignment_range = reversed(alignment_range)
-
-            for divider in alignment_range:
-                if not len(items) % divider:
-                    items_in_row = divider
-                    break
-
-        items_in_row = items_in_row if items_in_row else DEFAULT_ITEMS_IN_LINE
-
-        rows_in_keyboard = (len(items) // items_in_row)
-        buttons = [button_maker(
-            button_data=item,
-            front_marker=front_marker,
-            back_marker=back_marker,
-            copy_text_to_callback=copy_text_to_callback,
-        ) for item in items]
-
-        for _row in range(rows_in_keyboard):
-            keyboard.row(*[buttons.pop(0) for _button in range(items_in_row)])
-        keyboard.row(*buttons)
-
-        return keyboard
-
+def get_preformatted_keyboard(
+        items, front_marker, back_marker,
+        copy_text_to_callback, keyboard):
+    """
+    :param items:
+    :param front_marker:
+    :param back_marker:
+    :param copy_text_to_callback:
+    :param keyboard:
+    :return:
+    """
     for index, item in enumerate(items):
         if not isinstance(item, list):
             items[index] = [item, ]
-
     for row in items:
         buttons = [button_maker(
             button_data=item,
@@ -347,8 +319,77 @@ def keyboa_maker(
             copy_text_to_callback=copy_text_to_callback
         ) for item in row]
         keyboard.row(*buttons)
-
     return keyboard
+
+
+def get_generated_keyboard(
+        items, front_marker, back_marker, items_in_row,
+        auto_alignment, reverse_alignment_range,
+        copy_text_to_callback, keyboard):
+    """
+    :param items:
+    :param front_marker:
+    :param back_marker:
+    :param items_in_row:
+    :param auto_alignment:
+    :param reverse_alignment_range:
+    :param copy_text_to_callback:
+    :param keyboard:
+    :return:
+    """
+    items_in_row = calculate_items_in_row(
+        items, items_in_row, auto_alignment,
+        reverse_alignment_range)
+    rows_in_keyboard = (len(items) // items_in_row)
+    buttons = [button_maker(
+        button_data=item,
+        front_marker=front_marker,
+        back_marker=back_marker,
+        copy_text_to_callback=copy_text_to_callback,
+    ) for item in items]
+    for _row in range(rows_in_keyboard):
+        keyboard.row(*[buttons.pop(0) for _button in range(items_in_row)])
+    keyboard.row(*buttons)
+    return keyboard
+
+
+def calculate_items_in_row(items, items_in_row, auto_alignment, reverse_alignment_range):
+    """
+    :param items:
+    :param items_in_row:
+    :param auto_alignment:
+    :param reverse_alignment_range:
+    :return:
+    """
+    if auto_alignment:
+        if isinstance(auto_alignment, bool):
+            alignment_range = AUTO_ALIGNMENT_RANGE
+        elif not (isinstance(auto_alignment, Iterable)
+                  and all(map(lambda s: isinstance(s, int), auto_alignment))):
+            type_error_message = \
+                "The auto_alignment variable has not a proper type. " \
+                "Only Iterable of integers or boolean type allowed.\n" \
+                "You may define it as 'True' to use AUTO_ALIGNMENT_RANGE."
+            raise TypeError(type_error_message)
+        elif max(auto_alignment) > MAXIMUM_ITEMS_IN_LINE \
+                or min(auto_alignment) < MINIMUM_ITEMS_IN_LINE:
+            value_error_message = \
+                "The auto_alignment's item values should be between " \
+                "%s and %s. You entered: %s\n" \
+                "You may define it as 'True' to use AUTO_ALIGNMENT_RANGE." \
+                % (MINIMUM_ITEMS_IN_LINE, MAXIMUM_ITEMS_IN_LINE, auto_alignment)
+            raise ValueError(value_error_message)
+        else:
+            alignment_range = auto_alignment
+
+        if reverse_alignment_range:
+            alignment_range = reversed(alignment_range)
+
+        for divider in alignment_range:
+            if not len(items) % divider:
+                items_in_row = divider
+                break
+    return items_in_row if items_in_row else DEFAULT_ITEMS_IN_LINE
 
 
 def keyboa_combiner(
