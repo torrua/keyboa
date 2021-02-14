@@ -1,0 +1,25 @@
+checks:
+    python:
+        code_rating: true
+        duplicate_code: true
+
+build:
+  environment:
+    python: 3.7.1
+  nodes:
+    tests:
+      dependencies:
+        before:
+          - pip install -r requirements-test.txt
+
+    analysis:
+      tests:
+        override:
+          - py-scrutinizer-run
+          - pylint-run keyboa
+
+filter:
+    excluded_paths:
+        - tests/*
+tools:
+    external_code_coverage: true
