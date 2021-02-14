@@ -28,10 +28,12 @@ StructuredSequence = List[Union[FlatSequence, InlineButtonData]]
 # unified type that allows you to use any available data types for the keyboard
 BlockItems = Union[StructuredSequence, InlineButtonData]
 
+MAXIMUM_ITEMS_IN_KEYBOARD = 100
 MAXIMUM_ITEMS_IN_LINE = 8
 MINIMUM_ITEMS_IN_LINE = 1
 DEFAULT_ITEMS_IN_LINE = MINIMUM_ITEMS_IN_LINE
 AUTO_ALIGNMENT_RANGE = range(3, 6)
+MAXIMUM_CBD_LENGTH = 64
 
 
 def _keyboa_pre_check(
@@ -69,32 +71,48 @@ def _keyboa_pre_check(
         raise TypeError(type_error_message)
 
     # We need to count existing buttons too if we passed keyboard object to the function
-    total_items_number = sum(
-        len(row) if isinstance(row, (list, tuple, set)) else 1 for row in items)
+    items_in_keyboard = get_total_items_number(items, keyboard)
+    check_keyboard_items_limits(items_in_keyboard, items_in_row)
 
-    if keyboard:
-        keyboard_items = keyboard.__dict__['keyboard']
-        current_keyboard_items_number = sum(len(row) for row in keyboard_items)
-        expecting_items_number = total_items_number + current_keyboard_items_number
-    else:
-        expecting_items_number = total_items_number
 
-    items_in_keyboard_allowed_range = range(1, 101)  # Telegram limitation
-    if expecting_items_number not in items_in_keyboard_allowed_range:
+def check_keyboard_items_limits(items_in_keyboard: int, items_in_row: int) -> None:
+    """
+    :param items_in_keyboard:
+    :param items_in_row:
+    :return:
+    """
+
+    if items_in_keyboard > MAXIMUM_ITEMS_IN_KEYBOARD:
         value_error_message_keyboard = \
             "Telegram Bot API limit exceeded: The keyboard should have " \
             "from 1 to %s buttons at all. Your total amount is %s."
         raise ValueError(value_error_message_keyboard %
-                         (items_in_keyboard_allowed_range[-1], expecting_items_number))
+                         (MAXIMUM_ITEMS_IN_KEYBOARD, items_in_keyboard))
 
-    items_in_line_allowed_range = range(1, 9)  # Telegram limitation
-    if items_in_row is not None and items_in_row not in items_in_line_allowed_range:
+    if items_in_row is not None and \
+            (MINIMUM_ITEMS_IN_LINE > items_in_row or items_in_row > MAXIMUM_ITEMS_IN_LINE):
         value_error_message_line = \
             "Telegram Bot API limit exceeded: " \
             "The keyboard line should have from 1 to %s buttons. You entered %s."
-
         raise ValueError(value_error_message_line %
-                         (items_in_line_allowed_range[-1], items_in_row))
+                         (MAXIMUM_ITEMS_IN_LINE, items_in_row))
+
+
+def get_total_items_number(items, keyboard) -> int:
+    """
+    :param items:
+    :param keyboard:
+    :return:
+    """
+    total_items_number = sum(
+        len(row) if isinstance(row, (list, tuple, set)) else 1 for row in items)
+
+    if not keyboard:
+        return total_items_number
+
+    keyboard_items = keyboard.__dict__['keyboard']
+    current_keyboard_items_number = sum(len(row) for row in keyboard_items)
+    return total_items_number + current_keyboard_items_number
 
 
 def button_maker(
@@ -176,7 +194,7 @@ def get_callback_data(
     if not callback_data:
         raise ValueError("The callback data cannot be empty.")
 
-    if len(callback_data.encode()) > 64:
+    if len(callback_data.encode()) > MAXIMUM_CBD_LENGTH:
         size_error_message = "The callback data cannot be more than " \
                              "64 bytes for one button. Your size is %s" \
                              % len(callback_data.encode())
