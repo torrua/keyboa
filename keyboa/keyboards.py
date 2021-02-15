@@ -106,10 +106,7 @@ def keyboa_maker(
     if items is None:
         return keyboard
 
-    if items and not isinstance(items, list):
-        items = [items, ]
-
-    items = items[slice_start:slice_stop:slice_step] if items else items
+    items = get_verified_items(items, slice_start, slice_stop, slice_step)
 
     _keyboa_pre_check(items=items, items_in_row=items_in_row, keyboard=keyboard)
 
@@ -121,6 +118,21 @@ def keyboa_maker(
     return get_preformatted_keyboard(
         items, front_marker, back_marker,
         copy_text_to_callback, keyboard)
+
+
+def get_verified_items(items, slice_start, slice_stop, slice_step):
+    """
+    :param items:
+    :param slice_start:
+    :param slice_stop:
+    :param slice_step:
+    :return:
+    """
+
+    if items and not isinstance(items, list):
+        items = [items, ]
+
+    return items[slice_start:slice_stop:slice_step] if items else items
 
 
 def get_preformatted_keyboard(
@@ -164,23 +176,41 @@ def get_generated_keyboard(
     :return:
     """
 
-    if auto_alignment:
-        items_in_row = calculate_items_in_row(items, auto_alignment, reverse_alignment_range)
-
-    if not items_in_row:
-        items_in_row = DEFAULT_ITEMS_IN_LINE
+    items_in_row = get_verified_items_in_row(
+        items, items_in_row, auto_alignment, reverse_alignment_range)
 
     rows_in_keyboard = (len(items) // items_in_row)
+
     buttons = [button_maker(
         button_data=item,
         front_marker=front_marker,
         back_marker=back_marker,
         copy_text_to_callback=copy_text_to_callback,
     ) for item in items]
+
     for _row in range(rows_in_keyboard):
         keyboard.row(*[buttons.pop(0) for _button in range(items_in_row)])
     keyboard.row(*buttons)
+
     return keyboard
+
+
+def get_verified_items_in_row(
+        items, items_in_row,
+        auto_alignment, reverse_alignment_range):
+    """
+    :param items:
+    :param items_in_row:
+    :param auto_alignment:
+    :param reverse_alignment_range:
+    :return:
+    """
+    if auto_alignment:
+        items_in_row = calculate_items_in_row(
+            items, auto_alignment, reverse_alignment_range)
+    if not items_in_row:
+        items_in_row = DEFAULT_ITEMS_IN_LINE
+    return items_in_row
 
 
 def keyboa_combiner(

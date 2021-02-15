@@ -36,15 +36,23 @@ def _keyboa_pre_check(
     if items and not isinstance(items, list):
         items = [items, ]
 
+    check_keyboard_type(keyboard)
+
+    items_in_keyboard = get_total_items_number(items, keyboard)
+
+    check_keyboard_items_limits(items_in_keyboard, items_in_row)
+
+
+def check_keyboard_type(keyboard):
+    """
+    :param keyboard:
+    :return:
+    """
     if keyboard and not isinstance(keyboard, InlineKeyboardMarkup):
         type_error_message = \
             "Keyboard to which the new items will be added " \
             "should have InlineKeyboardMarkup type. Now it is a %s" % type(keyboard)
         raise TypeError(type_error_message)
-
-    # We need to count existing buttons too if we passed keyboard object to the function
-    items_in_keyboard = get_total_items_number(items, keyboard)
-    check_keyboard_items_limits(items_in_keyboard, items_in_row)
 
 
 def check_keyboard_items_limits(items_in_keyboard: int, items_in_row: int) -> None:
