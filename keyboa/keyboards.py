@@ -11,7 +11,7 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # pylint: disable=R0913
 from keyboa.constants import InlineButtonData, CallbackDataMarker, BlockItems, DEFAULT_ITEMS_IN_LINE
-from keyboa.functions import _keyboa_pre_check, get_callback_data, get_callback, get_text, get_button_tuple, \
+from keyboa.functions import _keyboa_pre_check, get_callback_data, get_callback, get_text, get_verified_button_tuple, \
     calculate_items_in_row
 
 
@@ -65,7 +65,7 @@ def button_maker(
     if isinstance(button_data, dict) and button_data.get("text"):
         return InlineKeyboardButton(**button_data)
 
-    button_tuple = get_button_tuple(button_data, copy_text_to_callback)
+    button_tuple = get_verified_button_tuple(button_data, copy_text_to_callback)
 
     text = get_text(button_tuple)
     raw_callback = get_callback(button_tuple)

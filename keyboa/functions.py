@@ -102,16 +102,10 @@ def get_callback_data(
     :param back_marker:
     :return:
     """
-    if front_marker is None:
-        front_marker = str()
-    if back_marker is None:
-        back_marker = str()
-    for marker in (front_marker, back_marker):
-        if not isinstance(marker, callback_data_types):
-            type_error_message = \
-                "Marker could not have %s type. Only %s allowed." \
-                % (type(marker), CallbackDataMarker)
-            raise TypeError(type_error_message)
+
+    front_marker = get_checked_marker(front_marker)
+    back_marker = get_checked_marker(back_marker)
+
     callback_data = "%s%s%s" % (front_marker, raw_callback, back_marker)
 
     if not callback_data:
@@ -124,6 +118,24 @@ def get_callback_data(
         raise ValueError(size_error_message)
 
     return callback_data
+
+
+def get_checked_marker(marker: CallbackDataMarker) -> CallbackDataMarker:
+    """
+    :param marker:
+    :return:
+    """
+
+    if marker is None:
+        marker = str()
+
+    if not isinstance(marker, callback_data_types):
+        type_error_message = \
+            "Marker could not have %s type. Only %s allowed." \
+            % (type(marker), CallbackDataMarker)
+        raise TypeError(type_error_message)
+
+    return marker
 
 
 def get_callback(button_data: tuple) -> str:
@@ -155,7 +167,7 @@ def get_text(button_data: tuple) -> str:
     return text
 
 
-def get_button_tuple(button_data: InlineButtonData, copy_text_to_callback: bool) -> tuple:
+def get_verified_button_tuple(button_data: InlineButtonData, copy_text_to_callback: bool) -> tuple:
     """
     :param button_data:
     :param copy_text_to_callback:
@@ -168,6 +180,20 @@ def get_button_tuple(button_data: InlineButtonData, copy_text_to_callback: bool)
             "parameter for StructuredSequence." \
             % (InlineKeyboardButton, type(button_data), InlineButtonData)
         raise TypeError(type_error_message)
+
+    btn_tuple = get_raw_tuple_from_button_data(button_data, copy_text_to_callback)
+
+    if len(btn_tuple) == 1 or btn_tuple[1] is None:
+        btn_tuple = btn_tuple[0], btn_tuple[0] if copy_text_to_callback else str()
+    return btn_tuple
+
+
+def get_raw_tuple_from_button_data(button_data, copy_text_to_callback):
+    """
+    :param button_data:
+    :param copy_text_to_callback:
+    :return:
+    """
     if isinstance(button_data, (str, int)):
         btn_tuple = button_data, button_data if copy_text_to_callback else str()
 
@@ -181,9 +207,6 @@ def get_button_tuple(button_data: InlineButtonData, copy_text_to_callback: bool)
         btn_tuple = next(iter(button_data.items()))
     else:
         btn_tuple = button_data
-
-    if len(btn_tuple) == 1 or btn_tuple[1] is None:
-        btn_tuple = btn_tuple[0], btn_tuple[0] if copy_text_to_callback else str()
     return btn_tuple
 
 
@@ -218,6 +241,15 @@ def get_alignment_range(auto_alignment):
     if isinstance(auto_alignment, bool):
         return AUTO_ALIGNMENT_RANGE
 
+    check_alignment_settings(auto_alignment)
+    return auto_alignment
+
+
+def check_alignment_settings(auto_alignment):
+    """
+    :param auto_alignment:
+    :return:
+    """
     if not (isinstance(auto_alignment, Iterable)
             and all(map(lambda s: isinstance(s, int), auto_alignment))):
         type_error_message = \
@@ -225,7 +257,6 @@ def get_alignment_range(auto_alignment):
             "Only Iterable of integers or boolean type allowed.\n" \
             "You may define it as 'True' to use AUTO_ALIGNMENT_RANGE."
         raise TypeError(type_error_message)
-
     if max(auto_alignment) > MAXIMUM_ITEMS_IN_LINE \
             or min(auto_alignment) < MINIMUM_ITEMS_IN_LINE:
         value_error_message = \
@@ -234,5 +265,3 @@ def get_alignment_range(auto_alignment):
             "You may define it as 'True' to use AUTO_ALIGNMENT_RANGE." \
             % (MINIMUM_ITEMS_IN_LINE, MAXIMUM_ITEMS_IN_LINE, auto_alignment)
         raise ValueError(value_error_message)
-
-    return auto_alignment
