@@ -21,7 +21,7 @@ $ pip install keyboa
 ```
 After that, just import the necessary functions:
 ```python
-from keyboa.keyboards import button_maker, keyboa_maker, keyboa_combiner
+from keyboa import button_maker, keyboa_maker, keyboa_combiner
 ```
 
 ## Usage
