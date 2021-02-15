@@ -3,23 +3,18 @@
 This module contains all the necessary functions for
 creating complex and functional inline keyboards.
 """
+# pylint: disable=R0913
 
 from collections.abc import Iterable
 from typing import Union, Optional, Tuple
 
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-# pylint: disable=R0913
-from keyboa.constants import InlineButtonData, CallbackDataMarker, BlockItems, DEFAULT_ITEMS_IN_LINE
-from keyboa.functions import _keyboa_pre_check, get_callback_data, get_callback, get_text, get_verified_button_tuple, \
+from keyboa.constants import InlineButtonData, CallbackDataMarker, \
+    BlockItems, DEFAULT_ITEMS_IN_LINE
+from keyboa.functions import _keyboa_pre_check, get_callback_data, \
+    get_callback, get_text, get_verified_button_tuple, \
     calculate_items_in_row
-
-
-# structureless sequence of InlineButtonData objects
-
-# structured sequence of InlineButtonData objects
-
-# unified type that allows you to use any available data types for the keyboard
 
 
 def button_maker(
