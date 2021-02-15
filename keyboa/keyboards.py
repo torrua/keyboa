@@ -12,9 +12,10 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from keyboa.constants import InlineButtonData, CallbackDataMarker, \
     BlockItems, DEFAULT_ITEMS_IN_LINE
-from keyboa.functions import _keyboa_pre_check, get_callback_data, \
-    get_callback, get_text, get_verified_button_tuple, \
-    calculate_items_in_row
+from keyboa.functions_alignment import calculate_items_in_row
+from keyboa.functions_button_data import get_text, get_verified_button_tuple
+from keyboa.functions_callback import get_callback_data, get_callback
+from keyboa.functions_precheck import _keyboa_pre_check
 
 
 def button_maker(
@@ -200,6 +201,12 @@ def keyboa_combiner(
     if isinstance(keyboards, InlineKeyboardMarkup):
         keyboards = (keyboards, )
 
+    data = merge_keyboards_data(keyboards)
+
+    return keyboa_maker(data)
+
+
+def merge_keyboards_data(keyboards):
     data = []
     for keyboard in keyboards:
         if keyboard is None:
@@ -212,5 +219,4 @@ def keyboa_combiner(
             raise TypeError(type_error_message)
 
         data.extend(keyboard.keyboard)
-
-    return keyboa_maker(data)
+    return data
