@@ -10,8 +10,12 @@ from typing import Union, Optional, Tuple
 
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from keyboa.constants import InlineButtonData, CallbackDataMarker, \
-    BlockItems, DEFAULT_ITEMS_IN_LINE
+from keyboa.constants import (
+    InlineButtonData,
+    CallbackDataMarker,
+    BlockItems,
+    DEFAULT_ITEMS_IN_LINE,
+)
 from keyboa.functions_alignment import calculate_items_in_row
 from keyboa.functions_button_data import get_text, get_verified_button_tuple
 from keyboa.functions_callback import get_callback_data, get_callback
@@ -19,10 +23,10 @@ from keyboa.functions_precheck import _keyboa_pre_check
 
 
 def button_maker(
-        button_data: InlineButtonData,
-        front_marker: CallbackDataMarker = str(),
-        back_marker: CallbackDataMarker = str(),
-        copy_text_to_callback: bool = False,
+    button_data: InlineButtonData,
+    front_marker: CallbackDataMarker = str(),
+    back_marker: CallbackDataMarker = str(),
+    copy_text_to_callback: bool = False,
 ) -> InlineKeyboardButton:
     """
     This function creates an InlineKeyboardButton object from various data types,
@@ -73,19 +77,17 @@ def button_maker(
 
 
 def keyboa_maker(
-        items: BlockItems = None,
-        front_marker: CallbackDataMarker = None,
-        back_marker: CallbackDataMarker = None,
-
-        items_in_row: int = None,
-        auto_alignment: Union[bool, Iterable] = False,
-        reverse_alignment_range: bool = False,
-        slice_start: int = None,
-        slice_stop: int = None,
-        slice_step: int = None,
-
-        copy_text_to_callback: bool = False,
-        add_to_keyboard: InlineKeyboardMarkup = None,
+    items: BlockItems = None,
+    front_marker: CallbackDataMarker = None,
+    back_marker: CallbackDataMarker = None,
+    items_in_row: int = None,
+    auto_alignment: Union[bool, Iterable] = False,
+    reverse_alignment_range: bool = False,
+    slice_start: int = None,
+    slice_stop: int = None,
+    slice_step: int = None,
+    copy_text_to_callback: bool = False,
+    add_to_keyboard: InlineKeyboardMarkup = None,
 ) -> InlineKeyboardMarkup:
     """
     :param items:
@@ -112,12 +114,19 @@ def keyboa_maker(
 
     if items_in_row or auto_alignment:
         return get_generated_keyboard(
-            items, front_marker, back_marker, items_in_row, auto_alignment,
-            reverse_alignment_range, copy_text_to_callback, keyboard)
+            items,
+            front_marker,
+            back_marker,
+            items_in_row,
+            auto_alignment,
+            reverse_alignment_range,
+            copy_text_to_callback,
+            keyboard,
+        )
 
     return get_preformatted_keyboard(
-        items, front_marker, back_marker,
-        copy_text_to_callback, keyboard)
+        items, front_marker, back_marker, copy_text_to_callback, keyboard
+    )
 
 
 def get_verified_items(items, slice_start, slice_stop, slice_step):
@@ -130,14 +139,16 @@ def get_verified_items(items, slice_start, slice_stop, slice_step):
     """
 
     if items and not isinstance(items, list):
-        items = [items, ]
+        items = [
+            items,
+        ]
 
     return items[slice_start:slice_stop:slice_step] if items else items
 
 
 def get_preformatted_keyboard(
-        items, front_marker, back_marker,
-        copy_text_to_callback, keyboard):
+    items, front_marker, back_marker, copy_text_to_callback, keyboard
+):
     """
     :param items:
     :param front_marker:
@@ -148,22 +159,33 @@ def get_preformatted_keyboard(
     """
     for index, item in enumerate(items):
         if not isinstance(item, list):
-            items[index] = [item, ]
+            items[index] = [
+                item,
+            ]
     for row in items:
-        buttons = [button_maker(
-            button_data=item,
-            front_marker=front_marker,
-            back_marker=back_marker,
-            copy_text_to_callback=copy_text_to_callback
-        ) for item in row]
+        buttons = [
+            button_maker(
+                button_data=item,
+                front_marker=front_marker,
+                back_marker=back_marker,
+                copy_text_to_callback=copy_text_to_callback,
+            )
+            for item in row
+        ]
         keyboard.row(*buttons)
     return keyboard
 
 
 def get_generated_keyboard(
-        items, front_marker, back_marker, items_in_row,
-        auto_alignment, reverse_alignment_range,
-        copy_text_to_callback, keyboard):
+    items,
+    front_marker,
+    back_marker,
+    items_in_row,
+    auto_alignment,
+    reverse_alignment_range,
+    copy_text_to_callback,
+    keyboard,
+):
     """
     :param items:
     :param front_marker:
@@ -177,16 +199,20 @@ def get_generated_keyboard(
     """
 
     items_in_row = get_verified_items_in_row(
-        items, items_in_row, auto_alignment, reverse_alignment_range)
+        items, items_in_row, auto_alignment, reverse_alignment_range
+    )
 
-    rows_in_keyboard = (len(items) // items_in_row)
+    rows_in_keyboard = len(items) // items_in_row
 
-    buttons = [button_maker(
-        button_data=item,
-        front_marker=front_marker,
-        back_marker=back_marker,
-        copy_text_to_callback=copy_text_to_callback,
-    ) for item in items]
+    buttons = [
+        button_maker(
+            button_data=item,
+            front_marker=front_marker,
+            back_marker=back_marker,
+            copy_text_to_callback=copy_text_to_callback,
+        )
+        for item in items
+    ]
 
     for _row in range(rows_in_keyboard):
         keyboard.row(*[buttons.pop(0) for _button in range(items_in_row)])
@@ -196,8 +222,8 @@ def get_generated_keyboard(
 
 
 def get_verified_items_in_row(
-        items, items_in_row,
-        auto_alignment, reverse_alignment_range):
+    items, items_in_row, auto_alignment, reverse_alignment_range
+):
     """
     :param items:
     :param items_in_row:
@@ -207,14 +233,17 @@ def get_verified_items_in_row(
     """
     if auto_alignment:
         items_in_row = calculate_items_in_row(
-            items, auto_alignment, reverse_alignment_range)
+            items, auto_alignment, reverse_alignment_range
+        )
     if not items_in_row:
         items_in_row = DEFAULT_ITEMS_IN_LINE
     return items_in_row
 
 
 def keyboa_combiner(
-        keyboards: Optional[Union[Tuple[InlineKeyboardMarkup, ...], InlineKeyboardMarkup]] = None
+    keyboards: Optional[
+        Union[Tuple[InlineKeyboardMarkup, ...], InlineKeyboardMarkup]
+    ] = None
 ) -> InlineKeyboardMarkup:
     """
     This function combines multiple InlineKeyboardMarkup objects into one.
@@ -229,7 +258,7 @@ def keyboa_combiner(
         return InlineKeyboardMarkup()
 
     if isinstance(keyboards, InlineKeyboardMarkup):
-        keyboards = (keyboards, )
+        keyboards = (keyboards,)
 
     data = merge_keyboards_data(keyboards)
 
@@ -247,9 +276,10 @@ def merge_keyboards_data(keyboards):
             continue
 
         if not isinstance(keyboard, InlineKeyboardMarkup):
-            type_error_message = \
-                "Keyboard element cannot be %s. Only InlineKeyboardMarkup allowed." \
+            type_error_message = (
+                "Keyboard element cannot be %s. Only InlineKeyboardMarkup allowed."
                 % type(keyboard)
+            )
             raise TypeError(type_error_message)
 
         data.extend(keyboard.keyboard)

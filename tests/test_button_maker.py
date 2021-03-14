@@ -24,14 +24,17 @@ UNACCEPTABLE_BUTTON_SOURCE_TYPES = (
     {2, "a"}, {"a", 2}, [2, "a"], (2, dict()),
     ["a", 2], (None, 2), (None, None), None,
 )
+
 COMBO_BUTTON_DATA = (
     {"button_text": "button_callback_data"},
     ("button_text", "button_callback_data"),
 )
+
 UNACCEPTABLE_BUTTON_TEXTS = [
     [None, "button_callback_data"],
     (None, "button_callback_data"),
-    [{"test_data": "test_data"}, "button_callback_data"]]
+    [{"test_data": "test_data"}, "button_callback_data"],
+]
 
 STRING_INT = ["12345", 12345]
 
@@ -43,9 +46,10 @@ def test_acceptable_button_source_types(button_data):
     :param button_data:
     :return:
     """
-    assert isinstance(button_maker(
-        button_data=button_data,
-        copy_text_to_callback=True), InlineKeyboardButton)
+    assert isinstance(
+        button_maker(button_data=button_data, copy_text_to_callback=True),
+        InlineKeyboardButton,
+    )
 
 
 @pytest.mark.parametrize("button_data", BUTTON_SOURCE_TYPES_UNACCEPTABLE_WITHOUT_COPY_TO_CALLBACK)
@@ -56,9 +60,7 @@ def test_acceptable_button_source_types(button_data):
     :return:
     """
     with pytest.raises(Exception) as _:
-        button_maker(
-            button_data=button_data,
-            copy_text_to_callback=False)
+        button_maker(button_data=button_data, copy_text_to_callback=False)
 
 
 @pytest.mark.parametrize("button_data", UNACCEPTABLE_BUTTON_SOURCE_TYPES)
@@ -99,8 +101,7 @@ def test_unacceptable_callback_data_type():
         button_maker(button_data=["button_text", {1, 2, 3, }])
 
 
-@pytest.mark.parametrize(
-    "button_data", UNACCEPTABLE_BUTTON_TEXTS)
+@pytest.mark.parametrize("button_data", UNACCEPTABLE_BUTTON_TEXTS)
 def test_unacceptable_text_type(button_data):
     """
 
@@ -139,7 +140,7 @@ def test_create_button_from_int_or_str_with_copy_option(button_data):
         button_data=button_data,
         front_marker="front_",
         back_marker="_back",
-        copy_text_to_callback=True
+        copy_text_to_callback=True,
     )
     assert isinstance(button, InlineKeyboardButton)
     assert button.text == "12345"
@@ -218,4 +219,7 @@ def test_big_callback_data():
     :return:
     """
     with pytest.raises(Exception) as _:
-        button_maker(button_data=("button_text", "limit"*13), copy_text_to_callback=False)
+        button_maker(
+            button_data=("button_text", "limit" * 13),
+            copy_text_to_callback=False
+        )

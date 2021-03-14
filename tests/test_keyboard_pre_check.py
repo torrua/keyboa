@@ -60,10 +60,7 @@ def test_acceptable_number_in_line(number_in_line):
     :param number_in_line:
     :return:
     """
-    assert (
-        _keyboa_pre_check(items=list(range(50)), items_in_row=number_in_line)
-        is None
-    )
+    assert _keyboa_pre_check(items=list(range(50)), items_in_row=number_in_line) is None
 
 
 def test_count_items_with_existing_keyboard():
