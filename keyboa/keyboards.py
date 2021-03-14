@@ -237,6 +237,10 @@ def keyboa_combiner(
 
 
 def merge_keyboards_data(keyboards):
+    """
+    :param keyboards:
+    :return:
+    """
     data = []
     for keyboard in keyboards:
         if keyboard is None:
