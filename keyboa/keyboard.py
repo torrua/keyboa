@@ -37,7 +37,7 @@ class Keyboa(Base):
         return keyboard
 
     @property
-    def keyboa(self) -> InlineKeyboardMarkup:
+    def keyboard(self) -> InlineKeyboardMarkup:
         """
         :return:
         """
@@ -187,4 +187,4 @@ class Keyboa(Base):
 
         data = cls.merge_keyboards_data(keyboards)
 
-        return cls(items=data).keyboa
+        return cls(items=data).keyboard
