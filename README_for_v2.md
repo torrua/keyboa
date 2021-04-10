@@ -15,26 +15,102 @@ This is a simple but flexible inline keyboard generator that works as an add-on 
 
 # How it works
 ## Installation
-Keyboa is compatible with Python 3.7 and higher. You can install this package with pip as usual:
+Keyboa is compatible with Python 3.5 and higher. You can install this package with pip as usual:
 ```sh
 $ pip install keyboa
 ```
-After that, just import:
+After that, just import the necessary functions:
 ```python
-from keyboa import Keyboa, Button
+from keyboa import button_maker, keyboa_maker, keyboa_combiner
 ```
 
 ## Usage
-### A minimal keyboard
-The simplest telegram keyboard can be created like this:
-```python
-menu = ["spam", "eggs", "ham"]
-keyboard = Keyboa(items=menu, copy_text_to_callback=True).keyboard
-bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
-```
-![keyboard from list of str](https://telegra.ph/file/d9280b11ed11ec13e6f56.png)
+There are **three main functions** which return ```InlineKeyboardButton``` or ```InlineKeyboardMarkup``` objects as a result:
+- ```button_maker()``` returns ```InlineKeyboardButton```
+- ```keyboa_maker()``` returns ```InlineKeyboardMarkup```
+- ```keyboa_combiner()``` returns ```InlineKeyboardMarkup```
 
 Let's take it in detail.
+### How to create Button
+💡 There is usually no need to create separate buttons as they will be created automatically from their source data when the keyboard is created.
+But if there is such a need, it can be done as follows.
+
+The ```button_maker()``` function creates an ```InlineKeyboardButton``` object from various data types, such as ```str```, ```int```, ```tuple```, ```dict```. You can also pass the ```InlineKeyboardButton``` object itself, which will return unchanged.
+
+All acceptable types combined into ```InlineButtonData``` type:
+```python
+InlineButtonData = Union[str, int, tuple, dict, InlineKeyboardButton]
+```
+Also there is a ```CallbackDataMarker``` type for callback data:
+```python
+CallbackDataMarker = Optional[Union[str, int]]
+```
+The function has following input parameters:
+
+Parameter | Type | Description
+--------- | ---- | -----------
+```button_data``` | InlineButtonData | An object from which the button will be created.<br>_See detailed explanation below._
+```front_marker``` | CallbackDataMarker | _Optional_. An object to be added to the **left** side of callback.
+```back_marker``` | CallbackDataMarker | _Optional_. An object to be added to the **right** side of callback.
+```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist).<br>The default value is ```False```.
+
+For ```button_data``` object --
+* If it is a ```str``` or an ```int```, it will be used for text (and callback, if ```copy_text_to_callback``` enabled).
+* If it is a ```tuple```, the zero element [0] will be the text, and the first [1] will be the callback. 
+* If it is a ```dict```, there are two options:
+   * if there is **no "text" key** in dictionary and only one key exists, the key will be the text, and the value will be the callback.<br>In this case no verification of the dictionary's contents is performed!
+  * if the **"text" key exists**, function passes the whole dictionary to ```InlineKeyboardButton```, where dictionary's keys represent object's parameters and dictionary's values represent parameters' values accordingly.
+In all other cases the ```ValueError``` will be raised.
+
+Let's look at a few examples:
+
+#### button from ```str``` or ```int```
+```python
+spam = button_maker(button_data="spam", copy_text_to_callback=True)
+```
+```python
+spam = button_maker(button_data="spam", front_marker="spam")
+```
+```python
+spam = button_maker(button_data="spam", front_marker="sp", back_marker="am")
+```
+In all examples above the ```spam``` variable will contain an ```InlineKeyboardButton``` object with the following data:
+```sh
+{'text': 'spam', 'callback_data': 'spam'}
+```
+❗ You cannot use this method with ```copy_text_to_callback``` disabled and unfilled both ```front_marker``` and ```back_marker```, because callback_data cannot be empty:
+
+```python
+spam = button_maker(button_data="spam")
+```
+```sh
+ValueError: The callback data cannot be empty.
+```
+
+#### button from ```tuple```
+```python
+spam = button_maker(button_data=("spam", "eggs"), front_marker="ham_", back_marker="_spam")
+```
+```sh
+{'text': 'spam', 'callback_data': 'ham_eggs_spam'}
+```
+💡 Notice that in this example we also used ```front_marker``` and ```back_marker``` to add some data to button's callback_data.
+
+#### button from ```dict``` without "text" key
+```python
+spam = button_maker(button_data={"spam": "ham_eggs_spam"})
+```
+```sh
+{'text': 'spam', 'callback_data': 'ham_eggs_spam'}
+```
+
+#### button from ```dict``` with "text" key
+```python
+spam = button_maker(button_data={"text": "spam", "url": "https://ya.ru/", "callback_data": "eggs"})
+```
+```sh
+{"text": "spam", "url": "https://ya.ru/", "callback_data": "eggs"}
+```
 
 ### How to create Keyboard
 The ```keyboa_maker()``` function creates an ```InlineKeyboardMarkup``` object from a list of ```BlockItems``` elements. A shot explanation of this type is given below:
@@ -117,86 +193,6 @@ bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 ![keyboard slice with auto_alignment](https://telegra.ph/file/cc41513058a2b3d9f83ba.png)
 
 As you can see, this keyboard consists of a ```[5:37]``` slice. In addition, although we did not specify the ```items_in_row``` parameter, the function divided list into equal rows, because of enabled ```auto_alignment``` parameter.
-### How to create Button
-💡 There is usually no need to create separate buttons as they will be created automatically from their source data when the keyboard is created.
-But if there is such a need, it can be done as follows.
-
-The ```button_maker()``` function creates an ```InlineKeyboardButton``` object from various data types, such as ```str```, ```int```, ```tuple```, ```dict```. You can also pass the ```InlineKeyboardButton``` object itself, which will return unchanged.
-
-All acceptable types combined into ```InlineButtonData``` type:
-```python
-InlineButtonData = Union[str, int, tuple, dict, InlineKeyboardButton]
-```
-Also there is a ```CallbackDataMarker``` type for callback data:
-```python
-CallbackDataMarker = Optional[Union[str, int]]
-```
-The function has following input parameters:
-
-Parameter | Type | Description
---------- | ---- | -----------
-```button_data``` | InlineButtonData | An object from which the button will be created.<br>_See detailed explanation below._
-```front_marker``` | CallbackDataMarker | _Optional_. An object to be added to the **left** side of callback.
-```back_marker``` | CallbackDataMarker | _Optional_. An object to be added to the **right** side of callback.
-```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist).<br>The default value is ```False```.
-
-For ```button_data``` object --
-* If it is a ```str``` or an ```int```, it will be used for text (and callback, if ```copy_text_to_callback``` enabled).
-* If it is a ```tuple```, the zero element [0] will be the text, and the first [1] will be the callback. 
-* If it is a ```dict```, there are two options:
-   * if there is **no "text" key** in dictionary and only one key exists, the key will be the text, and the value will be the callback.<br>In this case no verification of the dictionary's contents is performed!
-  * if the **"text" key exists**, function passes the whole dictionary to ```InlineKeyboardButton```, where dictionary's keys represent object's parameters and dictionary's values represent parameters' values accordingly.
-In all other cases the ```ValueError``` will be raised.
-
-Let's look at a few examples:
-
-#### button from ```str``` or ```int```
-```python
-spam = button_maker(button_data="spam", copy_text_to_callback=True)
-```
-```python
-spam = button_maker(button_data="spam", front_marker="spam")
-```
-```python
-spam = button_maker(button_data="spam", front_marker="sp", back_marker="am")
-```
-In all examples above the ```spam``` variable will contain an ```InlineKeyboardButton``` object with the following data:
-```sh
-{'text': 'spam', 'callback_data': 'spam'}
-```
-❗ You cannot use this method with ```copy_text_to_callback``` disabled and unfilled both ```front_marker``` and ```back_marker```, because callback_data cannot be empty:
-
-```python
-spam = button_maker(button_data="spam")
-```
-```sh
-ValueError: The callback data cannot be empty.
-```
-
-#### button from ```tuple```
-```python
-spam = button_maker(button_data=("spam", "eggs"), front_marker="ham_", back_marker="_spam")
-```
-```sh
-{'text': 'spam', 'callback_data': 'ham_eggs_spam'}
-```
-💡 Notice that in this example we also used ```front_marker``` and ```back_marker``` to add some data to button's callback_data.
-
-#### button from ```dict``` without "text" key
-```python
-spam = button_maker(button_data={"spam": "ham_eggs_spam"})
-```
-```sh
-{'text': 'spam', 'callback_data': 'ham_eggs_spam'}
-```
-
-#### button from ```dict``` with "text" key
-```python
-spam = button_maker(button_data={"text": "spam", "url": "https://ya.ru/", "callback_data": "eggs"})
-```
-```sh
-{"text": "spam", "url": "https://ya.ru/", "callback_data": "eggs"}
-```
 
 ### Combine Keyboards
 Sometimes it is necessary to combine several separate keyboard blocks  into the big one. The ```keyboa_combiner()``` function does just that!
