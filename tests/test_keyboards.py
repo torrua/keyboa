@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 """
-Test for keyboa_maker() function
+Test for button_maker() function
 """
 import os
 import sys
@@ -8,19 +8,56 @@ import sys
 sys.path.insert(0, "%s/../" % os.path.dirname(os.path.abspath(__file__)))
 
 import pytest
+from keyboa.keyboards import Keyboa
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from keyboa.keyboards import keyboa_maker
+
+def test_keyboards_is_none():
+    assert isinstance(Keyboa.combine(), InlineKeyboardMarkup)
+    assert Keyboa.combine().__dict__ == InlineKeyboardMarkup().__dict__
 
 
-def test_pass_none():
+def test_keyboards_is_single_keyboard():
+    kb = Keyboa(items=list(range(0, 4)), copy_text_to_callback=True).keyboa
+    result = Keyboa.combine(keyboards=kb)
+
+    assert isinstance(result, InlineKeyboardMarkup)
+    assert result.__dict__ == kb.__dict__
+
+
+def test_keyboards_is_multi_keyboards():
+    kb_1 = Keyboa(items=list(range(0, 4)), copy_text_to_callback=True).keyboa
+    kb_2 = Keyboa(items=list(range(10, 15)), copy_text_to_callback=True).keyboa
+
+    result = Keyboa.combine(keyboards=(kb_1, kb_2))
+    assert isinstance(result, InlineKeyboardMarkup)
+
+    result = Keyboa.combine(keyboards=(kb_1, None, kb_2))
+    assert isinstance(result, InlineKeyboardMarkup)
+
+    with pytest.raises(TypeError) as _:
+        Keyboa.combine(keyboards=(kb_1, 1))
+
+
+def test_not_keyboard_for_merge():
     """
 
     :return:
     """
-    result = keyboa_maker()
-    assert isinstance(result, InlineKeyboardMarkup)
-    assert result.to_dict()["inline_keyboard"] == []
+    with pytest.raises(TypeError) as _:
+        Keyboa.merge_keyboards_data(keyboards="not_a_keyboard")
+
+
+def test_merge_two_keyboard_into_one_out_of_limits():
+    """
+
+    :return:
+    """
+    k1 = Keyboa(items=list(range(60)), copy_text_to_callback=True)
+    k2 = Keyboa(items=list(range(60)), copy_text_to_callback=True)
+
+    with pytest.raises(ValueError) as _:
+        Keyboa.combine(keyboards=(k1.keyboa, k2.keyboa))
 
 
 def test_pass_string_with_copy_to_callback():
@@ -28,7 +65,7 @@ def test_pass_string_with_copy_to_callback():
 
     :return:
     """
-    result = keyboa_maker(items="Text", copy_text_to_callback=True)
+    result = Keyboa(items="Text", copy_text_to_callback=True).keyboa
     assert isinstance(result, InlineKeyboardMarkup)
     assert result.to_dict()["inline_keyboard"] == [
         [{"callback_data": "Text", "text": "Text"}]
@@ -41,7 +78,7 @@ def test_pass_string_without_copy_to_callback():
     :return:
     """
     with pytest.raises(Exception) as _:
-        assert isinstance(keyboa_maker(items="Text"), InlineKeyboardMarkup)
+        assert isinstance(Keyboa(items="Text").keyboa, InlineKeyboardMarkup)
 
 
 def test_pass_one_button():
@@ -49,9 +86,9 @@ def test_pass_one_button():
 
     :return:
     """
-    result = keyboa_maker(
+    result = Keyboa(
         items=InlineKeyboardButton(**{"text": "text", "callback_data": "callback_data"})
-    )
+    ).keyboa
     assert isinstance(result, InlineKeyboardMarkup)
     assert result.to_dict()["inline_keyboard"] == [
         [{"text": "text", "callback_data": "callback_data"}]
@@ -63,7 +100,7 @@ def test_pass_one_item_dict_with_text_field():
 
     :return:
     """
-    result = keyboa_maker(items={"text": "text", "callback_data": "callback_data"})
+    result = Keyboa(items={"text": "text", "callback_data": "callback_data"}).keyboa
     assert isinstance(result, InlineKeyboardMarkup)
     assert result.to_dict()["inline_keyboard"] == [
         [{"text": "text", "callback_data": "callback_data"}]
@@ -75,11 +112,11 @@ def test_pass_one_item_dict_without_text_field():
 
     :return:
     """
-    result = keyboa_maker(
+    result = Keyboa(
         items={
             "word": "callback_data",
         }
-    )
+    ).keyboa
     assert isinstance(result, InlineKeyboardMarkup)
     assert result.to_dict()["inline_keyboard"] == [
         [{"text": "word", "callback_data": "callback_data"}]
@@ -96,7 +133,7 @@ def test_pass_multi_item_dict_without_text_field():
             "word_1": "callback_data_1",
             "word_2": "callback_data_1",
         }
-        keyboa_maker(items=wrong_dict)
+        Keyboa(items=wrong_dict).keyboa
 
 
 def test_pass_one_row():
@@ -106,11 +143,11 @@ def test_pass_one_row():
     """
     start = 0
     stop = 8
-    result = keyboa_maker(
+    result = Keyboa(
         items=list(range(start, stop)),
         front_marker="FRONT_",
         copy_text_to_callback=True,
-    )
+    ).keyboa
     assert isinstance(result, InlineKeyboardMarkup)
     assert len(result.to_dict()["inline_keyboard"]) == stop
     assert (
@@ -123,11 +160,11 @@ def test_pass_structure():
 
     :return:
     """
-    result = keyboa_maker(
+    result = Keyboa(
         items=[list(range(4)), list(range(2, 5)), "string", {"t": "cbd"}],
         front_marker="STRUCTURE_",
         copy_text_to_callback=True,
-    )
+    ).keyboa
 
     assert isinstance(result, InlineKeyboardMarkup)
     assert len(result.to_dict()["inline_keyboard"]) == 4
@@ -140,61 +177,91 @@ def test_pass_structure():
 
 
 def test_auto_keyboa_maker_alignment():
-    result = keyboa_maker(
-        items=list(range(0, 36)), copy_text_to_callback=True, auto_alignment=True
-    )
+    result = Keyboa(
+        items=list(range(0, 36)), copy_text_to_callback=True, alignment=True
+    ).keyboa
     assert isinstance(result, InlineKeyboardMarkup)
 
     with pytest.raises(TypeError) as _:
-        keyboa_maker(
+        Keyboa(
             items=list(range(0, 36)),
             copy_text_to_callback=True,
-            auto_alignment="alignment",
-        )
+            alignment="alignment",
+        ).keyboa
 
     with pytest.raises(ValueError) as _:
-        keyboa_maker(
-            items=list(range(0, 36)), copy_text_to_callback=True, auto_alignment=[-1, 0]
-        )
+        Keyboa(
+            items=list(range(0, 36)), copy_text_to_callback=True, alignment=[-1, 0]
+        ).keyboa
 
     with pytest.raises(ValueError) as _:
-        keyboa_maker(
+        Keyboa(
             items=list(range(0, 36)),
             copy_text_to_callback=True,
-            auto_alignment=[10, 11, 12],
-        )
+            alignment=[10, 11, 12],
+        ).keyboa
 
-    result = keyboa_maker(
+    result = Keyboa(
         items=list(range(0, 36)),
         copy_text_to_callback=True,
-        auto_alignment=[3, 4, 6, ])
+        alignment=[
+            3,
+            4,
+            6,
+        ],
+    ).keyboa
     assert isinstance(result, InlineKeyboardMarkup)
 
-    result = keyboa_maker(
+    result = Keyboa(
         items=list(range(0, 36)),
         copy_text_to_callback=True,
-        auto_alignment=True,
-        reverse_alignment_range=True,
-    )
+        alignment=True,
+        alignment_reverse_range=True,
+    ).keyboa
     assert isinstance(result, InlineKeyboardMarkup)
 
-    result = keyboa_maker(
+    result = Keyboa(
         items=list(range(0, 36)),
         copy_text_to_callback=True,
-        auto_alignment=[3, 4, 6, ],
-        reverse_alignment_range=True)
+        alignment=[
+            3,
+            4,
+            6,
+        ],
+        alignment_reverse_range=True,
+    ).keyboa
     assert isinstance(result, InlineKeyboardMarkup)
 
-    result = keyboa_maker(
+    result = Keyboa(
         items=list(range(0, 36)),
         copy_text_to_callback=True,
-        auto_alignment=[5, 7, ],
-        reverse_alignment_range=True)
+        alignment=[
+            5,
+            7,
+        ],
+        alignment_reverse_range=True,
+    ).keyboa
     assert isinstance(result, InlineKeyboardMarkup)
 
 
 def test_auto_keyboa_maker_items_in_row():
-    result = keyboa_maker(
+    result = Keyboa(
         items=list(range(0, 36)), copy_text_to_callback=True, items_in_row=6
-    )
+    ).keyboa
     assert isinstance(result, InlineKeyboardMarkup)
+
+
+def test_slice():
+    result = Keyboa(items=list(range(0, 36)), copy_text_to_callback=True).slice(
+        slice_=slice(0, 12)
+    )
+    assert len(result.keyboard) == 12
+
+
+def test_slice_with_markers():
+    keyboa = Keyboa(items=list(range(0, 6)))
+    keyboa.front_marker = "front"
+    keyboa.back_marker = "back"
+
+    result = keyboa.keyboa
+    assert len(result.keyboard) == 6
