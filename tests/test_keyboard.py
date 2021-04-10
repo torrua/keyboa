@@ -8,7 +8,7 @@ import sys
 sys.path.insert(0, "%s/../" % os.path.dirname(os.path.abspath(__file__)))
 
 import pytest
-from keyboa.keyboards import Keyboa
+from keyboa.keyboard import Keyboa
 from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
