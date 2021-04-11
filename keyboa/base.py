@@ -4,7 +4,7 @@ This module contains basic class with initial Keyboa data.
 """
 # pylint: disable = C0116
 
-from typing import Union, Iterable
+from typing import Union, Iterable, Optional
 from telebot.types import InlineKeyboardMarkup
 from keyboa.button import Button
 from keyboa.constants import (
@@ -27,9 +27,9 @@ class Base:  # pylint: disable = R0902
         items_in_row: int = None,
         front_marker: CallbackDataMarker = str(),
         back_marker: CallbackDataMarker = str(),
-        copy_text_to_callback: bool = False,
+        copy_text_to_callback: Optional[bool] = None,
         alignment: Union[bool, Iterable] = None,
-        alignment_reverse_range: bool = None,
+        alignment_reverse_range: Optional[bool] = None,
     ):
         self._items = None
         self.items = items
@@ -43,7 +43,7 @@ class Base:  # pylint: disable = R0902
         self._back_marker = str()
         self.back_marker = back_marker
 
-        self._copy_text_to_callback = False
+        self._copy_text_to_callback = None
         self.copy_text_to_callback = copy_text_to_callback
 
         self._alignment = None
@@ -103,8 +103,8 @@ class Base:  # pylint: disable = R0902
 
     @copy_text_to_callback.setter
     def copy_text_to_callback(self, copy_text_to_callback_value) -> None:
-        if not isinstance(copy_text_to_callback_value, bool):
-            raise TypeError("'copy_text_to_callback' should have only bool type")
+        if not isinstance(copy_text_to_callback_value, (bool, type(None))):
+            raise TypeError("'copy_text_to_callback' should have only bool or none type")
         self._copy_text_to_callback = copy_text_to_callback_value
 
     @property

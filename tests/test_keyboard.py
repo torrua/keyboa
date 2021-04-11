@@ -78,7 +78,7 @@ def test_pass_string_without_copy_to_callback():
     :return:
     """
     with pytest.raises(Exception) as _:
-        assert isinstance(Keyboa(items="Text").keyboard, InlineKeyboardMarkup)
+        assert isinstance(Keyboa(items="Text", copy_text_to_callback=False).keyboard, InlineKeyboardMarkup)
 
 
 def test_pass_one_button():
@@ -133,7 +133,7 @@ def test_pass_multi_item_dict_without_text_field():
             "word_1": "callback_data_1",
             "word_2": "callback_data_1",
         }
-        Keyboa(items=wrong_dict).keyboard
+        kb = Keyboa(items=wrong_dict).keyboard
 
 
 def test_pass_one_row():
@@ -183,19 +183,19 @@ def test_auto_keyboa_maker_alignment():
     assert isinstance(result, InlineKeyboardMarkup)
 
     with pytest.raises(TypeError) as _:
-        Keyboa(
+        kb = Keyboa(
             items=list(range(0, 36)),
             copy_text_to_callback=True,
             alignment="alignment",
         ).keyboard
 
     with pytest.raises(ValueError) as _:
-        Keyboa(
+        kb = Keyboa(
             items=list(range(0, 36)), copy_text_to_callback=True, alignment=[-1, 0]
         ).keyboard
 
     with pytest.raises(ValueError) as _:
-        Keyboa(
+        kb = Keyboa(
             items=list(range(0, 36)),
             copy_text_to_callback=True,
             alignment=[10, 11, 12],
@@ -249,6 +249,7 @@ def test_auto_keyboa_maker_items_in_row():
         items=list(range(0, 36)), copy_text_to_callback=True, items_in_row=6
     ).keyboard
     assert isinstance(result, InlineKeyboardMarkup)
+    assert len(result.to_dict()["inline_keyboard"]) == 6
 
 
 def test_slice():
@@ -265,3 +266,23 @@ def test_slice_with_markers():
 
     result = keyboa.keyboard
     assert len(result.keyboard) == 6
+
+
+def test_minimal_keyboard_with_copy_text_to_callback_specified_none():
+    keyboa = Keyboa(items=list(range(0, 6)), copy_text_to_callback=None)
+    result = keyboa.keyboard
+    assert isinstance(result, InlineKeyboardMarkup)
+
+
+def test_minimal_keyboard_with_copy_text_to_callback_specified_true():
+    keyboa = Keyboa(items=list(range(0, 6)), copy_text_to_callback=True)
+    result = keyboa.keyboard
+    assert isinstance(result, InlineKeyboardMarkup)
+
+    result.to_dict()
+
+
+def test_minimal_keyboard_with_copy_text_to_callback_specified_false():
+    keyboa = Keyboa(items=list(range(0, 6)), copy_text_to_callback=False)
+    with pytest.raises(ValueError) as _:
+        result = keyboa.keyboard
