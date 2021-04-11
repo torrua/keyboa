@@ -16,6 +16,7 @@ class ButtonCheck:
     """
     This class contains all checks for Keyboa Button class parameters
     """
+
     @staticmethod
     def is_button_data_proper_type(button_data) -> None:
         if not isinstance(button_data, (tuple, dict, str, int)):

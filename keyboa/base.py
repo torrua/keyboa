@@ -13,7 +13,7 @@ from keyboa.constants import (
 )
 
 
-class Base(BaseCheck): # pylint: disable = R0902
+class Base(BaseCheck):  # pylint: disable = R0902
     """
     Base initial class for Keyboa
     """
@@ -26,7 +26,7 @@ class Base(BaseCheck): # pylint: disable = R0902
         back_marker: CallbackDataMarker = str(),
         copy_text_to_callback: Optional[bool] = None,
         alignment: Union[bool, Iterable] = None,
-        alignment_reverse_range: Optional[bool] = None,
+        alignment_reverse: Optional[bool] = None,
     ):
         self._items = None
         self.items = items
@@ -46,8 +46,8 @@ class Base(BaseCheck): # pylint: disable = R0902
         self._alignment = None
         self.alignment = alignment
 
-        self._alignment_reverse_range = None
-        self.alignment_reverse_range = alignment_reverse_range
+        self._alignment_reverse = None
+        self.alignment_reverse = alignment_reverse
 
         self._items_sliced = None
 
@@ -122,9 +122,9 @@ class Base(BaseCheck): # pylint: disable = R0902
         self._alignment = alignment_value
 
     @property
-    def alignment_reverse_range(self) -> bool:
-        return self._alignment_reverse_range
+    def alignment_reverse(self) -> bool:
+        return self._alignment_reverse
 
-    @alignment_reverse_range.setter
-    def alignment_reverse_range(self, alignment_reverse_range_value) -> None:
-        self._alignment_reverse_range = alignment_reverse_range_value
+    @alignment_reverse.setter
+    def alignment_reverse(self, alignment_reverse_value) -> None:
+        self._alignment_reverse = alignment_reverse_value
