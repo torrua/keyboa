@@ -37,7 +37,7 @@ class Keyboa(Base):
         return keyboard
 
     @property
-    def keyboa(self) -> InlineKeyboardMarkup:
+    def keyboard(self) -> InlineKeyboardMarkup:
         """
         :return:
         """
@@ -63,7 +63,7 @@ class Keyboa(Base):
         """
         :return:
         """
-        items_in_row = None
+        items_in_row = self.items_in_row
         if self.alignment:
             items_in_row = self._calculated_items_in_row
 
@@ -187,4 +187,4 @@ class Keyboa(Base):
 
         data = cls.merge_keyboards_data(keyboards)
 
-        return cls(items=data).keyboa
+        return cls(items=data).keyboard

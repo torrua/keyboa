@@ -4,7 +4,7 @@ This module contains all the necessary functions for
 creating buttons for telegram inline keyboards.
 """
 from dataclasses import dataclass
-
+from typing import Optional
 from telebot.types import InlineKeyboardButton
 
 from keyboa.constants import (
@@ -45,7 +45,7 @@ class Button:
     button_data: InlineButtonData = None
     front_marker: CallbackDataMarker = str()
     back_marker: CallbackDataMarker = str()
-    copy_text_to_callback: bool = False
+    copy_text_to_callback: Optional[bool] = None
 
     def generate(self) -> InlineKeyboardButton:
         """
@@ -62,10 +62,16 @@ class Button:
         if isinstance(self.button_data, dict) and self.button_data.get("text"):
             return InlineKeyboardButton(**self.button_data)
 
+        if (
+            self.copy_text_to_callback is None
+            and isinstance(self.button_data, (str, int))
+            and not (self.front_marker or self.back_marker)
+        ):
+            self.copy_text_to_callback = True
+
         button_tuple = self.get_verified_button_tuple(
             self.button_data, self.copy_text_to_callback
         )
-
         text = self.get_text(button_tuple)
         raw_callback = self.get_callback(button_tuple)
         callback_data = self.get_callback_data(
@@ -128,7 +134,6 @@ class Button:
         :param marker:
         :return:
         """
-        # TODO Refactor Separate functions
         if marker is None:
             marker = str()
 

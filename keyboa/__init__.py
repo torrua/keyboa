@@ -3,5 +3,5 @@
 Import from here
 """
 
-from keyboa.keyboards import Keyboa
+from keyboa.keyboard import Keyboa
 from keyboa.button import Button
