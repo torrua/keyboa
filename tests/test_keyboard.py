@@ -78,7 +78,10 @@ def test_pass_string_without_copy_to_callback():
     :return:
     """
     with pytest.raises(Exception) as _:
-        assert isinstance(Keyboa(items="Text", copy_text_to_callback=False).keyboard, InlineKeyboardMarkup)
+        assert isinstance(
+            Keyboa(items="Text", copy_text_to_callback=False).keyboard,
+            InlineKeyboardMarkup,
+        )
 
 
 def test_pass_one_button():
@@ -259,30 +262,321 @@ def test_slice():
     assert len(result.keyboard) == 12
 
 
-def test_slice_with_markers():
+def test_minimal_kb_with_copy_text_to_callback_specified_none():
     keyboa = Keyboa(items=list(range(0, 6)))
-    keyboa.front_marker = "front"
-    keyboa.back_marker = "back"
-
-    result = keyboa.keyboard
-    assert len(result.keyboard) == 6
-
-
-def test_minimal_keyboard_with_copy_text_to_callback_specified_none():
-    keyboa = Keyboa(items=list(range(0, 6)), copy_text_to_callback=None)
     result = keyboa.keyboard
     assert isinstance(result, InlineKeyboardMarkup)
 
 
-def test_minimal_keyboard_with_copy_text_to_callback_specified_true():
+def test_minimal_kb_with_items_out_of_limits():
+    with pytest.raises(ValueError) as _:
+        keyboa = Keyboa(items=list(range(0, 120)))
+
+
+def test_minimal_kb_with_copy_text_to_callback_specified_true():
     keyboa = Keyboa(items=list(range(0, 6)), copy_text_to_callback=True)
     result = keyboa.keyboard
     assert isinstance(result, InlineKeyboardMarkup)
 
-    result.to_dict()
 
-
-def test_minimal_keyboard_with_copy_text_to_callback_specified_false():
+def test_minimal_kb_with_copy_text_to_callback_specified_false():
     keyboa = Keyboa(items=list(range(0, 6)), copy_text_to_callback=False)
     with pytest.raises(ValueError) as _:
         result = keyboa.keyboard
+
+
+@pytest.mark.parametrize("items_in_row", [2, 3, 4, 6])
+def test_minimal_kb_with_fixed_items_in_row(items_in_row):
+    keyboa = Keyboa(items=list(range(0, 12)), items_in_row=items_in_row).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    assert len(kb_rows) == 12 / items_in_row
+
+
+def test_minimal_kb_with_front_marker():
+    keyboa = Keyboa(items=list(range(0, 3)), front_marker="front_").keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == [
+        "front_",
+        "front_",
+        "front_",
+    ]
+
+
+def test_minimal_kb_with_front_marker_and_copy_text_to_callback():
+    keyboa = Keyboa(
+        items=list(range(0, 3)), front_marker="front_", copy_text_to_callback=True
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == [
+        "front_0",
+        "front_1",
+        "front_2",
+    ]
+
+
+def test_minimal_kb_with_back_marker():
+    keyboa = Keyboa(items=list(range(0, 3)), back_marker="_back").keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == [
+        "_back",
+        "_back",
+        "_back",
+    ]
+
+
+def test_minimal_kb_with_back_marker_out_of_limits():
+    with pytest.raises(ValueError) as _:
+        marker_65 = "_1234567890123456789012345678901234567890123456789012345678901234"
+        keyboa = Keyboa(items=list(range(0, 3)), back_marker=marker_65).keyboard
+
+
+def test_minimal_kb_with_back_marker_out_of_limits_with_text():
+    with pytest.raises(ValueError) as _:
+        marker_64 = "1234567890123456789012345678901234567890123456789012345678901234"
+        keyboa = Keyboa(items=list(range(0, 3)), back_marker=marker_64, copy_text_to_callback=True).keyboard
+
+
+def test_minimal_kb_with_empty_back_marker():
+    with pytest.raises(ValueError) as _:
+        keyboa = Keyboa(items=list(range(0, 3)), back_marker=str(), copy_text_to_callback=False).keyboard
+
+
+def test_minimal_kb_with_back_marker_and_copy_text_to_callback():
+    keyboa = Keyboa(
+        items=list(range(0, 3)), back_marker="_back", copy_text_to_callback=True
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == [
+        "0_back",
+        "1_back",
+        "2_back",
+    ]
+
+
+def test_minimal_kb_with_front_and_back_markers():
+    keyboa = Keyboa(
+        items=list(range(0, 3)), front_marker="front_", back_marker="_back"
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == [
+        "front__back",
+        "front__back",
+        "front__back",
+    ]
+
+
+def test_minimal_kb_with_front_and_back_markers_and_copy_text_to_callback():
+    keyboa = Keyboa(
+        items=list(range(0, 3)),
+        copy_text_to_callback=True,
+        front_marker="front_",
+        back_marker="_back",
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == [
+        "front_0_back",
+        "front_1_back",
+        "front_2_back",
+    ]
+
+
+def test_minimal_kb_with_alignment_true():
+    keyboa = Keyboa(items=list(range(0, 12)), alignment=True).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    assert 12 / len(kb_rows) == 3
+
+
+def test_minimal_kb_with_items_in_row():
+    keyboa = Keyboa(items=list(range(0, 12)), items_in_row=6).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    assert 12 / len(kb_rows) == 6
+
+
+def test_minimal_kb_with_items_in_row_out_of_limits():
+    with pytest.raises(ValueError) as _:
+        keyboa = Keyboa(items=list(range(0, 12)), items_in_row=12).keyboard
+
+
+def test_minimal_kb_with_alignment_true_slice():
+    keyboa = Keyboa(items=list(range(0, 12)), alignment=True).slice(slice_=slice(0, 6))
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    assert 6 / len(kb_rows) == 3
+
+
+def test_minimal_kb_with_alignment_true_and_reversed_alignment_true():
+    keyboa = Keyboa(
+        items=list(range(0, 12)), alignment=True, alignment_reverse_range=True
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    assert 12 / len(kb_rows) == 4
+
+
+def test_minimal_kb_with_alignment_specified():
+    keyboa = Keyboa(items=list(range(0, 12)), alignment=range(2, 7)).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    assert 12 / len(kb_rows) == 2
+
+
+def test_minimal_kb_with_alignment_specified_out_of_limits():
+    with pytest.raises(ValueError) as _:
+        keyboa = Keyboa(items=list(range(0, 12)), alignment=range(0, 12)).keyboard
+
+
+def test_minimal_kb_with_alignment_specified_and_reversed_alignment_true():
+    keyboa = Keyboa(
+        items=list(range(0, 12)), alignment=range(2, 7), alignment_reverse_range=True
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    assert 12 / len(kb_rows) == 6
+
+
+def test_minimal_kb_with_reversed_alignment_true():
+    # usually there is no needs and no sense for doing so
+    keyboa = Keyboa(items=list(range(0, 12)), alignment_reverse_range=True).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    assert 12 / len(kb_rows) == 1
+
+
+def test_minimal_kb_with_all_parameters_specified_reversed_range_true():
+    keyboa = Keyboa(
+        items=list(range(0, 12)),
+        alignment=range(2, 7),
+        copy_text_to_callback=True,
+        front_marker="front_",
+        back_marker="_back",
+        alignment_reverse_range=True,
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    assert len(kb_rows) == 2
+
+    items_in_row = 12 / len(kb_rows)
+    assert items_in_row == 6
+
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == [
+        "front_0_back",
+        "front_6_back",
+    ]
+
+
+def test_minimal_kb_with_all_parameters_specified_reversed_range_false():
+    keyboa = Keyboa(
+        items=list(range(0, 12)),
+        alignment=range(2, 7),
+        copy_text_to_callback=True,
+        front_marker="front_",
+        back_marker="_back",
+        alignment_reverse_range=False,
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    assert len(kb_rows) == 6
+
+    items_in_row = 12 / len(kb_rows)
+    assert items_in_row == 2
+
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == [
+        "front_0_back",
+        "front_2_back",
+        "front_4_back",
+        "front_6_back",
+        "front_8_back",
+        "front_10_back",
+    ]
+
+
+def test_structured_kb():
+    keyboa = Keyboa(
+        items=[
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],
+        ],
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    assert len(kb_rows) == 3
+
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == [
+        "1",
+        "4",
+        "7",
+    ]
+
+
+def test_structured_kb_with_alignment():
+    with pytest.raises(TypeError) as _:
+        keyboa = Keyboa(
+            items=[
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9],
+            ],
+            alignment=True,
+        ).keyboard
+
+
+def test_structured_kb_with_items_in_row():
+    with pytest.raises(TypeError) as _:
+        keyboa = Keyboa(
+            items=[
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9],
+            ],
+            items_in_row=6,
+        ).keyboard
+
+
+def test_structured_kb_with_front_marker():
+    keyboa = Keyboa(
+        items=[
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],
+        ],
+        front_marker="front_",
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == [
+        "front_1",
+        "front_4",
+        "front_7",
+    ]
+
+
+def test_kb_from_tuples():
+    keyboa = Keyboa(
+        items=[(1, "a"), (2, "b"), (3, "c"), (4, "d"), (5, "e"), (6, "f"), ]
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == ['a', 'b', 'c', 'd', 'e', 'f']
+
+
+def test_kb_from_tuples_with_front_marker():
+    keyboa = Keyboa(
+        items=[(1, "a"), (2, "b"), (3, "c"), (4, "d"), (5, "e"), (6, "f"), ],
+        front_marker="front_",
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == ['front_a', 'front_b', 'front_c', 'front_d', 'front_e', 'front_f']
+
+
+def test_kb_from_tuples_with_back_marker_and_items_in_row():
+    keyboa = Keyboa(
+        items=[(1, "a"), (2, "b"), (3, "c"), (4, "d"), (5, "e"), (6, "f"), ],
+        back_marker="_back",
+        items_in_row=2
+    ).keyboard
+    kb_rows = keyboa.to_dict().get("inline_keyboard")
+    callbacks = [bnt[0].get("callback_data") for bnt in kb_rows]
+    assert callbacks == ['a_back', 'c_back', 'e_back', ]
