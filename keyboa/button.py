@@ -65,7 +65,7 @@ class Button:
         if (
             self.copy_text_to_callback is None
             and isinstance(self.button_data, (str, int))
-            and not (self.front_marker or self.back_marker)
+            # and not (self.front_marker or self.back_marker)
         ):
             self.copy_text_to_callback = True
 
