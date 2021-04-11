@@ -6,19 +6,18 @@ creating buttons for telegram inline keyboards.
 from dataclasses import dataclass
 from typing import Optional
 from telebot.types import InlineKeyboardButton
-
+from keyboa.button_check import ButtonCheck
 from keyboa.constants import (
     InlineButtonData,
     CallbackDataMarker,
     callback_data_types,
-    MAXIMUM_CBD_LENGTH,
     button_text_types,
     ButtonText,
 )
 
 
 @dataclass
-class Button:
+class Button(ButtonCheck):
     """Default Button class
     :button_data: InlineButtonData - an object from which the button will be created:
     • If string or an integer, it will be used for both text and callback.
@@ -62,10 +61,7 @@ class Button:
         if isinstance(self.button_data, dict) and self.button_data.get("text"):
             return InlineKeyboardButton(**self.button_data)
 
-        if self.copy_text_to_callback is None and isinstance(
-            self.button_data, (str, int)
-        ):
-            self.copy_text_to_callback = True
+        self.is_auto_copy_text_to_callback()
 
         button_tuple = self.get_verified_button_tuple(
             self.button_data, self.copy_text_to_callback
@@ -80,19 +76,24 @@ class Button:
 
         return InlineKeyboardButton(**prepared_button)
 
-    @staticmethod
-    def get_callback(button_data: tuple) -> str:
+    def is_auto_copy_text_to_callback(self):
+        """
+        Enable copy_text_to_callback parameter if button_data is str or int
+        :return:
+        """
+        if self.copy_text_to_callback is None and isinstance(
+            self.button_data, (str, int)
+        ):
+            self.copy_text_to_callback = True
+
+    @classmethod
+    def get_callback(cls, button_data: tuple) -> str:
         """
         :param button_data:
         :return:
         """
         callback = button_data[1]
-        if not isinstance(callback, callback_data_types):
-            type_error_message = "Callback cannot be %s. Only %s allowed." % (
-                type(callback),
-                callback_data_types,
-            )
-            raise TypeError(type_error_message)
+        cls.is_callback_proper_type(callback)
         return callback
 
     @classmethod
@@ -117,12 +118,7 @@ class Button:
         if not callback_data:
             raise ValueError("The callback data cannot be empty.")
 
-        if len(callback_data.encode()) > MAXIMUM_CBD_LENGTH:
-            size_error_message = (
-                "The callback data cannot be more than "
-                "64 bytes for one button. Your size is %s" % len(callback_data.encode())
-            )
-            raise ValueError(size_error_message)
+        cls.is_callback_data_in_limits(callback_data)
 
         return callback_data
 
@@ -171,14 +167,7 @@ class Button:
         :param copy_text_to_callback:
         :return:
         """
-        if not isinstance(button_data, (tuple, dict, str, int)):
-            type_error_message = (
-                "Cannot create %s from %s. Please use %s instead.\n"
-                "Probably you specified 'auto_alignment' or 'items_in_line' "
-                "parameter for StructuredSequence."
-                % (InlineKeyboardButton, type(button_data), InlineButtonData)
-            )
-            raise TypeError(type_error_message)
+        cls.is_button_data_proper_type(button_data)
 
         btn_tuple = cls.get_raw_tuple_from_button_data(
             button_data, copy_text_to_callback
