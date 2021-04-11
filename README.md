@@ -13,7 +13,12 @@ This is a simple but flexible inline keyboard generator that works as an add-on 
 - easily combine multiple keyboards into one,
 - many other cool things...
 
-# How it works
+> 📌 **IMPORTANT NOTICE**
+> 
+> ☝ This guide applies to Keyboa version 3 and above.
+> If you are using Keyboa version 2 and below, please use [The guide for version 2](README_for_v2.md).
+
+# How it works 
 ## Installation
 Keyboa is compatible with Python 3.7 and higher. You can install this package with pip as usual:
 ```sh
@@ -21,50 +26,50 @@ $ pip install keyboa
 ```
 After that, just import:
 ```python
-from keyboa import Keyboa, Button
+from keyboa import Keyboa
 ```
 
-## Usage
+## Quick Start
 ### A minimal keyboard
 The simplest telegram keyboard can be created like this:
 ```python
 menu = ["spam", "eggs", "ham"]
-keyboard = Keyboa(items=menu, copy_text_to_callback=True).keyboard
+keyboard = Keyboa(items=menu).keyboard
 bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 ```
 ![keyboard from list of str](https://telegra.ph/file/d9280b11ed11ec13e6f56.png)
 
-Let's take it in detail.
-
-### How to create Keyboard
-The ```keyboa_maker()``` function creates an ```InlineKeyboardMarkup``` object from a list of ```BlockItems``` elements. A shot explanation of this type is given below:
+### A simple structured keyboard
+If you need to create a keyboard with a predefined structure, do the following:
 ```python
-# structureless sequence of InlineButtonData objects
-FlatSequence = List[InlineButtonData]
-
-# structured sequence of InlineButtonData objects
-StructuredSequence = List[Union[FlatSequence, InlineButtonData]]
-
-# unified type that allows you to use any available data types for the keyboard
-BlockItems = Union[StructuredSequence, InlineButtonData]
+menu = [["spam", "eggs"], ["ham", "bread"], "spam"]
+keyboard = Keyboa(items=menu).keyboard
+bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 ```
-The function has following input parameters:
+![keyboard from list of str](https://telegra.ph/file/2eb6752324fa196cae4ac.png)
 
-Parameter | Type | Description
+That's a good start, but let's take a closer look at how it works and what additional features we can use.
+
+## Description
+
+The ```Keyboa``` class provides several functions for creating pyTelegramBotAPI compatible keyboards with ```InlineKeyboardMarkup``` type.
+We'll discuss them in detail later, but for now let's take a look at the Keyboa class and its attributes.
+
+The table below may seem large, but don't be scared - use it just as a reference to understand the nuances and limitations of the module.
+
+### Keyboa class
+Attribute | Type | Description
 --------- | ---- | -----------
-```items``` | BlockItems | _Optional_.
+```items``` | BlockItems | _Mandatory_. List of items for the keyboard. The total number should not be more than 100 due to the Telegram Bot API limitation.
+```items_in_row``` | Integer | _Optional_. The number of buttons in one keyboard row. Must be **from 1 to 8** due to the Telegram Bot API limitation.<br>The default value is ```None```, which means that by default the keyboard structure depends on the grouping of  ```items``` elements.
+```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist).<br>The default value is ```None```.
 ```front_marker``` | CallbackDataMarker | _Optional_. Front part of callback data, which is common for all buttons.
 ```back_marker``` | CallbackDataMarker | _Optional_. Back part of callback data, which is common for all buttons.
-```items_in_row``` | Integer | _Optional_. The number of buttons in one keyboard row. Must be **from one to eight** due to the Telegram Bot API limitation.<br>The default value is ```None```, which means that by default the keyboard structure depends on the grouping of  ```items``` elements.
-```auto_alignment``` | Boolean or Iterable | If ```True```, will try to split all items into **equal rows in a range of 3 to 5**.<br>If ```Iterable``` (with any ```int``` in the range from 1 to 8), will try to use it.<br>This enabled option replaces the action of ```items_in_row``` variable, but if a suitable divisor cannot be found, function will use the ```items_in_row``` value.<br>The default value is ```False```.
-```reverse_alignment_range``` | Boolean | If ```True```, will try to find the divisor starting from the end of the ```auto_alignment``` variable (if defined) or from the default range.<br>This enabled option works only if ```auto_alignment``` is enabled.<br>The default value is ```False```.
-```slice_start``` | Integer | _Optional_. Refers to the index of the element which is used as a start of the slice, i.e defines **start** position in ```[start:stop:step]``` range.
-```slice_stop``` | Integer | _Optional_. Refers to the index of the element we should stop just before to finish slice, i.e defines **stop** position in ```[start:stop:step]``` range.
-```slice_step``` | Integer | _Optional_. It allows you to take each nth-element within range, i.e defines **step** position in ```[start:stop:step]``` range.
-```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist).<br>The default value is ```False```.
-```add_to_keyboard``` | InlineKeyboardMarkup | _Optional_. You may pass the keyboard to which the specified items will be added.
+```alignment``` | Boolean or Iterable | If ```True```, will try to split all items into **equal rows in a range of 3 to 5**.<br>If ```Iterable``` (with any ```int``` in the range from 1 to 8), will try to find a suitable divisor among them.<br><br>Enabled attribute replaces the action of ```items_in_row``` attribute, but if a suitable divisor cannot be found, function will use the ```items_in_row``` value if provided.<br><br>The default value is ```None```.
+```alignment_reverse``` | Boolean | If ```True```, will try to find the divisor starting from the end of the ```auto_alignment``` variable (if defined) or from the default range.<br><br>Enabled attribute works only if ```auto_alignment``` is enabled.<br><br>The default value is ```None```.
 
-Let's start with a simple example!
+## Create keyboards
+
 #### keyboard from ```list``` of ```str```
 The easiest way to create a keyboard is to pass a list of items to a function.
 ```python
