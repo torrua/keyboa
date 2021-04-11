@@ -63,9 +63,7 @@ class Button(ButtonCheck):
 
         self.is_auto_copy_text_to_callback()
 
-        button_tuple = self.get_verified_button_tuple(
-            self.button_data, self.copy_text_to_callback
-        )
+        button_tuple = self._verified_button_tuple
         text = self.get_text(button_tuple)
         raw_callback = self.get_callback(button_tuple)
         callback_data = self.get_callback_data(
@@ -158,44 +156,42 @@ class Button(ButtonCheck):
             raise ValueError("Button text cannot be empty.")
         return text
 
-    @classmethod
-    def get_verified_button_tuple(
-        cls, button_data: InlineButtonData, copy_text_to_callback: bool
-    ) -> tuple:
+    @property
+    def _verified_button_tuple(self) -> tuple:
         """
-        :param button_data:
-        :param copy_text_to_callback:
         :return:
         """
-        cls.is_button_data_proper_type(button_data)
+        self.is_button_data_proper_type(self.button_data)
 
-        btn_tuple = cls.get_raw_tuple_from_button_data(
-            button_data, copy_text_to_callback
-        )
+        btn_tuple = self._raw_tuple_from_button_data
 
         if len(btn_tuple) == 1 or btn_tuple[1] is None:
-            btn_tuple = btn_tuple[0], btn_tuple[0] if copy_text_to_callback else str()
+            btn_tuple = (
+                btn_tuple[0],
+                btn_tuple[0] if self.copy_text_to_callback else str(),
+            )
         return btn_tuple
 
-    @staticmethod
-    def get_raw_tuple_from_button_data(button_data, copy_text_to_callback):
+    @property
+    def _raw_tuple_from_button_data(self) -> tuple:
         """
-        :param button_data:
-        :param copy_text_to_callback:
         :return:
         """
-        if isinstance(button_data, (str, int)):
-            btn_tuple = button_data, button_data if copy_text_to_callback else str()
+        if isinstance(self.button_data, (str, int)):
+            btn_tuple = (
+                self.button_data,
+                self.button_data if self.copy_text_to_callback else str(),
+            )
 
-        elif isinstance(button_data, dict):
-            if len(button_data.keys()) != 1:
+        elif isinstance(self.button_data, dict):
+            if len(self.button_data.keys()) != 1:
                 value_type_error = (
                     "Cannot convert dictionary to InlineButtonData object. "
                     "You passed more than one item, but did not add 'text' key."
                 )
                 raise ValueError(value_type_error)
 
-            btn_tuple = next(iter(button_data.items()))
+            btn_tuple = next(iter(self.button_data.items()))
         else:
-            btn_tuple = button_data
+            btn_tuple = self.button_data
         return btn_tuple
