@@ -219,7 +219,7 @@ def test_auto_keyboa_maker_alignment():
         items=list(range(0, 36)),
         copy_text_to_callback=True,
         alignment=True,
-        alignment_reverse_range=True,
+        alignment_reverse=True,
     ).keyboard
     assert isinstance(result, InlineKeyboardMarkup)
 
@@ -231,7 +231,7 @@ def test_auto_keyboa_maker_alignment():
             4,
             6,
         ],
-        alignment_reverse_range=True,
+        alignment_reverse=True,
     ).keyboard
     assert isinstance(result, InlineKeyboardMarkup)
 
@@ -242,7 +242,7 @@ def test_auto_keyboa_maker_alignment():
             5,
             7,
         ],
-        alignment_reverse_range=True,
+        alignment_reverse=True,
     ).keyboard
     assert isinstance(result, InlineKeyboardMarkup)
 
@@ -431,7 +431,7 @@ def test_minimal_kb_with_alignment_true_slice():
 
 def test_minimal_kb_with_alignment_true_and_reversed_alignment_true():
     keyboa = Keyboa(
-        items=list(range(0, 12)), alignment=True, alignment_reverse_range=True
+        items=list(range(0, 12)), alignment=True, alignment_reverse=True
     ).keyboard
     kb_rows = keyboa.to_dict().get("inline_keyboard")
     assert 12 / len(kb_rows) == 4
@@ -450,7 +450,7 @@ def test_minimal_kb_with_alignment_specified_out_of_limits():
 
 def test_minimal_kb_with_alignment_specified_and_reversed_alignment_true():
     keyboa = Keyboa(
-        items=list(range(0, 12)), alignment=range(2, 7), alignment_reverse_range=True
+        items=list(range(0, 12)), alignment=range(2, 7), alignment_reverse=True
     ).keyboard
     kb_rows = keyboa.to_dict().get("inline_keyboard")
     assert 12 / len(kb_rows) == 6
@@ -458,7 +458,7 @@ def test_minimal_kb_with_alignment_specified_and_reversed_alignment_true():
 
 def test_minimal_kb_with_reversed_alignment_true():
     # usually there is no needs and no sense for doing so
-    keyboa = Keyboa(items=list(range(0, 12)), alignment_reverse_range=True).keyboard
+    keyboa = Keyboa(items=list(range(0, 12)), alignment_reverse=True).keyboard
     kb_rows = keyboa.to_dict().get("inline_keyboard")
     assert 12 / len(kb_rows) == 1
 
@@ -470,7 +470,7 @@ def test_minimal_kb_with_all_parameters_specified_reversed_range_true():
         copy_text_to_callback=True,
         front_marker="front_",
         back_marker="_back",
-        alignment_reverse_range=True,
+        alignment_reverse=True,
     ).keyboard
     kb_rows = keyboa.to_dict().get("inline_keyboard")
     assert len(kb_rows) == 2
@@ -492,7 +492,7 @@ def test_minimal_kb_with_all_parameters_specified_reversed_range_false():
         copy_text_to_callback=True,
         front_marker="front_",
         back_marker="_back",
-        alignment_reverse_range=False,
+        alignment_reverse=False,
     ).keyboard
     kb_rows = keyboa.to_dict().get("inline_keyboard")
     assert len(kb_rows) == 6

@@ -82,7 +82,7 @@ class Keyboa(Base):
         )
         return (
             reversed(alignment_range)
-            if self.alignment_reverse_range
+            if self.alignment_reverse
             else alignment_range
         )
 
