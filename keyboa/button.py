@@ -62,10 +62,8 @@ class Button:
         if isinstance(self.button_data, dict) and self.button_data.get("text"):
             return InlineKeyboardButton(**self.button_data)
 
-        if (
-            self.copy_text_to_callback is None
-            and isinstance(self.button_data, (str, int))
-            # and not (self.front_marker or self.back_marker)
+        if self.copy_text_to_callback is None and isinstance(
+            self.button_data, (str, int)
         ):
             self.copy_text_to_callback = True
 
