@@ -134,7 +134,6 @@ class Button:
         :param marker:
         :return:
         """
-        # TODO Refactor Separate functions
         if marker is None:
             marker = str()
 

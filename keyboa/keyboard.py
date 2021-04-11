@@ -188,16 +188,3 @@ class Keyboa(Base):
         data = cls.merge_keyboards_data(keyboards)
 
         return cls(items=data).keyboard
-
-
-if __name__ == '__main__':
-    kb = Keyboa(
-        items=list(range(0, 36)), copy_text_to_callback=True, items_in_row=6
-    )
-    result = kb.slice()
-    print(result)
-    print(kb.__dict__)
-    from telebot import TeleBot
-    from os import getenv
-    bot = TeleBot(token=getenv("TELEGRAM_BOT_TOKEN"))
-    bot.send_message(chat_id=getenv("TELEGRAM_ADMIN_ID"), text="test", reply_markup=result)
