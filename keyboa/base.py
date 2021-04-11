@@ -13,7 +13,7 @@ from keyboa.constants import (
 )
 
 
-class Base(BaseCheck): # pylint: disable = R0902
+class Base(BaseCheck):  # pylint: disable = R0902
     """
     Base initial class for Keyboa
     """

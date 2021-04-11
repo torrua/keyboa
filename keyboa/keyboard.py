@@ -80,11 +80,7 @@ class Keyboa(Base):
         alignment_range = (
             AUTO_ALIGNMENT_RANGE if isinstance(self.alignment, bool) else self.alignment
         )
-        return (
-            reversed(alignment_range)
-            if self.alignment_reverse
-            else alignment_range
-        )
+        return reversed(alignment_range) if self.alignment_reverse else alignment_range
 
     @property
     def _preformatted_keyboa(self) -> InlineKeyboardMarkup:
