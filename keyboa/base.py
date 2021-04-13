@@ -24,7 +24,7 @@ class Base(BaseCheck):  # pylint: disable = R0902
         items_in_row: int = None,
         front_marker: CallbackDataMarker = str(),
         back_marker: CallbackDataMarker = str(),
-        copy_text_to_callback: Optional[bool] = None,
+        copy_text_to_callback: Optional[bool] = True,
         alignment: Union[bool, Iterable] = None,
         alignment_reverse: Optional[bool] = None,
     ):
@@ -40,7 +40,7 @@ class Base(BaseCheck):  # pylint: disable = R0902
         self._back_marker = str()
         self.back_marker = back_marker
 
-        self._copy_text_to_callback = None
+        self._copy_text_to_callback = True
         self.copy_text_to_callback = copy_text_to_callback
 
         self._alignment = None

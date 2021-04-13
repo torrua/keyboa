@@ -13,12 +13,10 @@ This is a simple but flexible inline keyboard generator that works as an add-on 
 - easily combine multiple keyboards into one,
 - many other cool things...
 
-> 📌 **IMPORTANT NOTICE**
-> 
-> ☝ This guide applies to Keyboa version 3 and above.
+> 📌 **IMPORTANT NOTICE**:
+> This guide applies to Keyboa version 3 and above.
 > If you are using Keyboa version 2 and below, please use [The guide for version 2](README_for_v2.md).
 
-# How it works 
 ## Installation
 Keyboa is compatible with Python 3.7 and higher. You can install this package with pip as usual:
 ```sh
@@ -50,9 +48,10 @@ bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 
 That's a good start, but let's take a closer look at how it works and what additional features we can use.
 
-## Description
+## How it works 
 
-The ```Keyboa``` class provides several functions for creating pyTelegramBotAPI compatible keyboards with ```InlineKeyboardMarkup``` type.
+The ```Keyboa``` class provides two options for creating pyTelegramBotAPI compatible keyboards with ```InlineKeyboardMarkup``` type: method ```slice()``` and property ```keyboard```.
+
 We'll discuss them in detail later, but for now let's take a look at the Keyboa class and its attributes.
 
 The table below may seem large, but don't be scared - use it just as a reference to understand the nuances and limitations of the module.
@@ -62,7 +61,7 @@ Attribute | Type | Description
 --------- | ---- | -----------
 ```items``` | BlockItems | _Mandatory_. List of items for the keyboard. The total number should not be more than 100 due to the Telegram Bot API limitation.
 ```items_in_row``` | Integer | _Optional_. The number of buttons in one keyboard row. Must be **from 1 to 8** due to the Telegram Bot API limitation.<br>The default value is ```None```, which means that by default the keyboard structure depends on the grouping of  ```items``` elements.
-```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist).<br>The default value is ```None```.
+```copy_text_to_callback``` | Boolean | If ```True```, and ```button_data``` is a ```str``` or an ```int```, function will copy button text to callback data (and add other markers if they exist).<br>The default value is ```True```.
 ```front_marker``` | CallbackDataMarker | _Optional_. Front part of callback data, which is common for all buttons.
 ```back_marker``` | CallbackDataMarker | _Optional_. Back part of callback data, which is common for all buttons.
 ```alignment``` | Boolean or Iterable | If ```True```, will try to split all items into **equal rows in a range of 3 to 5**.<br>If ```Iterable``` (with any ```int``` in the range from 1 to 8), will try to find a suitable divisor among them.<br><br>Enabled attribute replaces the action of ```items_in_row``` attribute, but if a suitable divisor cannot be found, function will use the ```items_in_row``` value if provided.<br><br>The default value is ```None```.
@@ -71,10 +70,10 @@ Attribute | Type | Description
 ## Create keyboards
 
 #### keyboard from ```list``` of ```str```
-The easiest way to create a keyboard is to pass a list of items to a function.
+The easiest way to create a keyboard is to init Keyboa object with a list of items and get ```keyboard``` property.
 ```python
 menu = ["spam", "eggs", "ham"]
-keyboard = keyboa_maker(items=menu, copy_text_to_callback=True)
+keyboard = Keyboa(items=menu).keydoard
 bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 ```
 ![keyboard from list of str](https://telegra.ph/file/d9280b11ed11ec13e6f56.png)
@@ -82,16 +81,19 @@ bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 By default, each item in the list becomes a separate row, but it's easy to change by combining the items into groups.
 ```python
 menu = [["spam", "eggs"], ["ham", "bread"], "spam"]
-keyboard = keyboa_maker(items=menu, copy_text_to_callback=True)
+keyboard = Keyboa(items=menu).keyboard
 bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 ```
 ![keyboard from list of str](https://telegra.ph/file/2eb6752324fa196cae4ac.png)
 
 Now you see that the keyboard buttons are arranged according to how we grouped them in the list. 
+
+Note that the last "spam" has become a separate row, although we have not put it on a separate list.
+
 And of course you can create more complex structures, for example:
 ```python
-menu = [["spam", "eggs", "ham"], ["ham", "eggs"], "spam", ["sausages", "spam"], ["eggs", "spam", "spam"]]
-keyboard = keyboa_maker(items=menu, copy_text_to_callback=True)
+menu = [["spam", "eggs", "ham"], ["ham", "eggs"], ["spam", ] ["sausages", "spam"], ["eggs", "spam", "spam"]]
+keyboard = Keyboa(items=menu).keyboard
 bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 ```
 ![keyboard from list of str](https://telegra.ph/file/faff37512c626845c5524.png)
@@ -101,27 +103,23 @@ bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 Let's go deeper. Suppose you have a list of 24 items, and you would like to divide it into rows of 6 buttons each. Here is what you need to do:
 ```python
 numbers = list(range(1, 25))
-keyboard = keyboa_maker(items=numbers, items_in_row=6, copy_text_to_callback=True)
+keyboard = Keyboa(items=numbers, items_in_row=6).keyboard
 bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 ```
 ![keyboard with 6 items_in_row](https://telegra.ph/file/2122cb9f50938b39b4439.png)
 
 💡 You can easily make 3, 4 or even 8 buttons in a row, changing the ```items_in_row``` parameter only.
 
-Now we will try to use more parameters to see how they will affect the result:
+Now we will try to use more attributes to see how they will affect the result:
 ```python
-keyboard = keyboa_maker(
-    items=list(range(0, 48)),
-    auto_alignment=True,
-    slice_start=5,
-    slice_stop=37,
-    copy_text_to_callback=True
-)
+keyboa = Keyboa(items=list(range(0, 48)), alignment=True)
+keyboard = keyboa.slice(slice(5, 37))
 bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 ```
 ![keyboard slice with auto_alignment](https://telegra.ph/file/cc41513058a2b3d9f83ba.png)
 
-As you can see, this keyboard consists of a ```[5:37]``` slice. In addition, although we did not specify the ```items_in_row``` parameter, the function divided list into equal rows, because of enabled ```auto_alignment``` parameter.
+As you can see, this keyboard consists of a ```[5:37]``` slice. In addition, although we did not specify the ```items_in_row``` attribute, the function divided list into equal rows, because of enabled ```alignment``` attribute.
+
 ### How to create Button
 💡 There is usually no need to create separate buttons as they will be created automatically from their source data when the keyboard is created.
 But if there is such a need, it can be done as follows.
