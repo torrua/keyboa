@@ -55,7 +55,7 @@ That's a good start, but let's take a closer look at how it works and what addit
 ## How it works 
 
 The ```Keyboa``` class provides two options for creating pyTelegramBotAPI compatible keyboards with ```InlineKeyboardMarkup``` type: method ```slice()``` and property ```keyboard```.
-Use the [Keyboa class](#Keyboa class) description below as a reference to understand the nuances and limitations of the module or see the following examples.
+Use the [Keyboa class](#keyboa-class) description below as a reference to understand the nuances and limitations of the module or see the following examples.
 
 ## Create keyboards
 The easiest way to create a keyboard is to init Keyboa object with a list of items and get ```keyboard``` property.
@@ -111,7 +111,7 @@ As you can see, this keyboard consists of a ```[5:37]``` slice. In addition, alt
 ## Create Buttons
 💡 There is usually no need to create separate buttons as they will be created automatically from their source data when the keyboard is created.
 But if there is such a need, it can be done as follows.
-Import ```Button``` class ([detailed description](#Button class)), create button object from various data types, such as ```str```, ```int```, ```tuple```, ```dict``` and call ```button``` property to get ```InlineKeyboardButton```:
+Import ```Button``` class ([detailed description](#button-class)), create button object from various data types, such as ```str```, ```int```, ```tuple```, ```dict``` and call ```button``` property to get ```InlineKeyboardButton```:
 ```python
 from keyboa import Button
 spam = Button(button_data="spam").button
