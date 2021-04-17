@@ -74,6 +74,10 @@ class Button(ButtonCheck):
 
         return InlineKeyboardButton(**prepared_button)
 
+    @property
+    def button(self):
+        return self.generate()
+
     def is_auto_copy_text_to_callback(self):
         """
         Enable copy_text_to_callback parameter if button_data is str or int
