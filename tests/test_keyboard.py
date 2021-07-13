@@ -651,3 +651,19 @@ def test_kb_from_tuples_with_back_marker_and_items_in_row():
         "c_back",
         "e_back",
     ]
+
+
+def test_kb_with_items_in_row_and_last_buttons():
+    keyboa = Keyboa(
+        items=[
+            (1, "a"),
+            (2, "b"),
+            (3, "c"),
+            (4, "d"),
+            (5, "e"),
+            (6, "f"),
+            (7, "g"),
+        ],
+        items_in_row=2,
+    ).keyboard
+    assert len(keyboa.keyboard) == 4

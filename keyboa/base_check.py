@@ -23,7 +23,7 @@ class BaseCheck:
     @staticmethod
     def is_all_items_in_limits(items) -> None:
         items_in_keyboard = sum(
-            len(row) if isinstance(row, (list, tuple, set)) else 1 for row in items
+            len(row) if isinstance(row, list) else 1 for row in items
         )
         if items_in_keyboard > MAXIMUM_ITEMS_IN_KEYBOARD:
             value_error_message_keyboard = (

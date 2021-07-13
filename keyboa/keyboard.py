@@ -132,7 +132,9 @@ class Keyboa(Base):
 
         for _row in range(rows_in_keyboard):
             keyboard.row(*[buttons.pop(0) for _button in range(items_in_row)])
-        keyboard.row(*buttons)
+
+        if buttons:
+            keyboard.row(*buttons)
 
         return keyboard
 
