@@ -46,6 +46,9 @@ class Button(ButtonCheck):
     back_marker: CallbackDataMarker = str()
     copy_text_to_callback: Optional[bool] = None
 
+    def __call__(self, *args, **kwargs):
+        return self.generate()
+
     def generate(self) -> InlineKeyboardButton:
         """
         This function creates an InlineKeyboardButton object from various data types,
