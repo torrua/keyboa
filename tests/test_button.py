@@ -76,7 +76,7 @@ def test_acceptable_button_source_types(button_data):
 @pytest.mark.parametrize(
     "button_data", BUTTON_SOURCE_TYPES_UNACCEPTABLE_WITHOUT_COPY_TO_CALLBACK
 )
-def test_acceptable_button_source_types_without_callback(button_data):
+def test_unacceptable_button_source_types_without_callback(button_data):
     """
 
     :param button_data:
