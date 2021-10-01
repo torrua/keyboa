@@ -19,6 +19,15 @@ from keyboa.constants import (
 class Keyboa(Base):
     """Default Keyboa class"""
 
+    def __call__(
+            self,
+            slice_: slice = slice(None, None, None),
+    ) -> InlineKeyboardMarkup:
+        """
+        :return:
+        """
+        return self.slice(slice_)
+
     def slice(
         self,
         slice_: slice = slice(None, None, None),
