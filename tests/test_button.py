@@ -284,3 +284,8 @@ def test_none_as_markers():
 def test_button_property():
     btn = Button(button_data="button_text", copy_text_to_callback=True).button
     assert isinstance(btn, InlineKeyboardButton)
+
+
+def test_button_call_method():
+    btn = Button(button_data="button_text", copy_text_to_callback=True)
+    assert isinstance(btn(), InlineKeyboardButton)
