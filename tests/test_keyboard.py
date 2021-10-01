@@ -667,3 +667,22 @@ def test_kb_with_items_in_row_and_last_buttons():
         items_in_row=2,
     ).keyboard
     assert len(keyboa.keyboard) == 4
+
+
+def test_kb_is_callable():
+    keyboa = Keyboa(
+        items=[
+            (1, "a"),
+            (2, "b"),
+            (3, "c"),
+            (4, "d"),
+            (5, "e"),
+            (6, "f"),
+        ],
+        back_marker="_is_callable",
+        items_in_row=2,
+    )
+    assert type(keyboa.keyboard) == type(keyboa())
+    assert keyboa.keyboard.to_json() == keyboa().to_json() == keyboa.slice().to_json()
+    assert keyboa.slice(slice(3)).to_json() == keyboa(slice(3)).to_json()
+    assert keyboa.slice(slice(2, 4, 2)).to_json() == keyboa(slice(2, 4, 2)).to_json()
