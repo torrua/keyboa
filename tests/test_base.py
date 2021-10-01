@@ -17,7 +17,7 @@ def test_items_is_none_or_empty():
     :return:
     """
     with pytest.raises(ValueError) as _:
-        Keyboa(items=list())
+        Keyboa(items=[])
     with pytest.raises(ValueError) as _:
         Keyboa(items=None)
 
