@@ -37,7 +37,7 @@ UNACCEPTABLE_BUTTON_SOURCE_TYPES = (
     {2, "a"},
     {"a", 2},
     [2, "a"],
-    (2, dict()),
+    (2, {}),
     ["a", 2],
     (None, 2),
     (None, None),
