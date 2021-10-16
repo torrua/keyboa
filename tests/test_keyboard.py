@@ -682,7 +682,7 @@ def test_kb_is_callable():
         back_marker="_is_callable",
         items_in_row=2,
     )
-    assert type(keyboa.keyboard) == type(keyboa())
+    assert isinstance(keyboa(), InlineKeyboardMarkup)
     assert keyboa.keyboard.to_json() == keyboa().to_json() == keyboa.slice().to_json()
     assert keyboa.slice(slice(3)).to_json() == keyboa(slice(3)).to_json()
     assert keyboa.slice(slice(2, 4, 2)).to_json() == keyboa(slice(2, 4, 2)).to_json()
