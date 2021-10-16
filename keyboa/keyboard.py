@@ -20,8 +20,8 @@ class Keyboa(Base):
     """Default Keyboa class"""
 
     def __call__(
-            self,
-            slice_: slice = slice(None, None, None),
+        self,
+        slice_: slice = slice(None, None, None),
     ) -> InlineKeyboardMarkup:
         """
         :return:
