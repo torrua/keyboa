@@ -37,8 +37,8 @@ from keyboa import Keyboa
 El teclado para telegram más sencillo, se puede crear así:
 ```python
 menu = ["spam", "eggs", "ham"]
-keyboard = Keyboa(items=menu).keyboard
-bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
+keyboard = Keyboa(items=menu)
+bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard())
 ```
 ![keyboard from list of str](https://telegra.ph/file/d9280b11ed11ec13e6f56.png)
 
@@ -46,8 +46,8 @@ bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 Si necesita crear un teclado con una estructura predefinida, haga lo siguiente:
 ```python
 menu = [["spam", "eggs"], ["ham", "bread"], "spam"]
-keyboard = Keyboa(items=menu).keyboard
-bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
+keyboard = Keyboa(items=menu)
+bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard())
 ```
 ![keyboard from list of str](https://telegra.ph/file/2eb6752324fa196cae4ac.png)
 
@@ -62,16 +62,16 @@ Utilice a continuación,la descripción de la [Keyboa class](#keyboa-class). Com
 La forma más sencilla de crear un teclado es iniciar el objeto Keyboa con una lista de elementos y obtener la propiedad ```keyboard```.
 ```python
 menu = ["spam", "eggs", "ham"]
-keyboard = Keyboa(items=menu).keydoard
-bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
+keyboard = Keyboa(items=menu)
+bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard())
 ```
 ![keyboard from list of str](https://telegra.ph/file/d9280b11ed11ec13e6f56.png)
 
 Por defecto, cada elemento de la lista se convierte en una fila separada, pero es fácil de cambiar al combinar los elementos en grupos.
 ```python
 menu = [["spam", "eggs"], ["ham", "bread"], "spam"]
-keyboard = Keyboa(items=menu).keyboard
-bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
+keyboard = Keyboa(items=menu)
+bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard())
 ```
 ![keyboard from list of str](https://telegra.ph/file/2eb6752324fa196cae4ac.png)
 
@@ -82,8 +82,8 @@ Fíjese en que el último "spam" se ha convertido en una fila separada, aunque n
 Y, por supuesto, usted puede crear estructuras más complejas si lo desea, por ejemplo:
 ```python
 menu = [["spam", "eggs", "ham"], ["ham", "eggs"], ["spam", ] ["sausages", "spam"], ["eggs", "spam", "spam"]]
-keyboard = Keyboa(items=menu).keyboard
-bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
+keyboard = Keyboa(items=menu)
+bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard())
 ```
 ![keyboard from list of str](https://telegra.ph/file/faff37512c626845c5524.png)
 
@@ -92,8 +92,8 @@ bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 Profundicemos. Suponga que tiene una lista de 24 elementos, y le gustaría dividirla en filas de 6 botones cada una. Debería realizar lo siguiente:
 ```python
 numbers = list(range(1, 25))
-keyboard = Keyboa(items=numbers, items_in_row=6).keyboard
-bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
+keyboard = Keyboa(items=numbers, items_in_row=6)
+bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard())
 ```
 ![keyboard with 6 items_in_row](https://telegra.ph/file/2122cb9f50938b39b4439.png)
 
@@ -102,7 +102,7 @@ bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 Ahora intentaremos usar más atributos para ver cómo afectarán el resultado:
 ```python
 keyboa = Keyboa(items=list(range(0, 48)), alignment=True)
-keyboard = keyboa.slice(slice(5, 37))
+keyboard = keyboa(slice(5, 37))
 bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard)
 ```
 ![keyboard slice with alignment](https://telegra.ph/file/cc41513058a2b3d9f83ba.png)
@@ -182,8 +182,8 @@ kb_cities = Keyboa(
     items=["Moscow", "London", "Tokyo", ],
     front_marker="&city=",
     back_marker="$"
-).keyboard
-bot.send_message(chat_id=user_id, text="Select your city:", reply_markup=kb_cities)
+)
+bot.send_message(chat_id=user_id, text="Select your city:", reply_markup=kb_cities())
 ```
 ![keyboard cities](https://telegra.ph/file/dcd011c72e43aefd8d00d.png)
 
@@ -203,8 +203,8 @@ kb_streets = Keyboa(
     items=streets, 
     front_marker="&street=",
     back_marker=received_callback  # añadimos datos existentes al final
-).keyboard
-bot.send_message(chat_id=user_id, text="Select your street:", reply_markup=kb_streets)
+)
+bot.send_message(chat_id=user_id, text="Select your street:", reply_markup=kb_streets())
 ```
 ![keyboard streets](https://telegra.ph/file/cf06e3bc0adece894535d.png)
 
@@ -234,8 +234,8 @@ kb_apartments = Keyboa(
     items=apartments, 
     front_marker="&apartments=", 
     back_marker=received_callback  # añadimos datos existentes al final
-).keyboard
-bot.send_message(chat_id=user_id, text="Select your apartments:", reply_markup=kb_apartments)
+)
+bot.send_message(chat_id=user_id, text="Select your apartments:", reply_markup=kb_apartments())
 ```
 ![keyboard streets](https://telegra.ph/file/0eec50498f2a68955c81c.png)
 
