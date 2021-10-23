@@ -1,6 +1,6 @@
 # -*- coding:utf-8 -*-
 """
-Test for button_maker() function
+Test for Keyboa object
 """
 import os
 import sys
@@ -136,7 +136,8 @@ def test_pass_multi_item_dict_without_text_field():
             "word_1": "callback_data_1",
             "word_2": "callback_data_1",
         }
-        kb = Keyboa(items=wrong_dict).keyboard
+        keyboa = Keyboa(items=wrong_dict)
+        keyboa()
 
 
 def test_pass_one_row():
@@ -186,23 +187,26 @@ def test_auto_keyboa_maker_alignment():
     assert isinstance(result, InlineKeyboardMarkup)
 
     with pytest.raises(TypeError) as _:
-        kb = Keyboa(
+        keyboa = Keyboa(
             items=list(range(0, 36)),
             copy_text_to_callback=True,
             alignment="alignment",
-        ).keyboard
+        )
+        keyboa()
 
     with pytest.raises(ValueError) as _:
-        kb = Keyboa(
+        keyboa = Keyboa(
             items=list(range(0, 36)), copy_text_to_callback=True, alignment=[-1, 0]
-        ).keyboard
+        )
+        keyboa()
 
     with pytest.raises(ValueError) as _:
-        kb = Keyboa(
+        keyboa = Keyboa(
             items=list(range(0, 36)),
             copy_text_to_callback=True,
             alignment=[10, 11, 12],
-        ).keyboard
+        )
+        keyboa()
 
     result = Keyboa(
         items=list(range(0, 36)),
@@ -270,7 +274,7 @@ def test_minimal_kb_with_copy_text_to_callback_specified_none():
 
 def test_minimal_kb_with_items_out_of_limits():
     with pytest.raises(ValueError) as _:
-        keyboa = Keyboa(items=list(range(0, 120)))
+        Keyboa(items=list(range(0, 120)))
 
 
 def test_minimal_kb_with_copy_text_to_callback_specified_true():
@@ -282,7 +286,7 @@ def test_minimal_kb_with_copy_text_to_callback_specified_true():
 def test_minimal_kb_with_copy_text_to_callback_specified_false():
     keyboa = Keyboa(items=list(range(0, 6)), copy_text_to_callback=False)
     with pytest.raises(ValueError) as _:
-        result = keyboa.keyboard
+        keyboa()
 
 
 @pytest.mark.parametrize("items_in_row", [2, 3, 4, 6])
@@ -330,7 +334,8 @@ def test_minimal_kb_with_back_marker():
 def test_minimal_kb_with_back_marker_out_of_limits():
     with pytest.raises(ValueError) as _:
         marker_65 = "_1234567890123456789012345678901234567890123456789012345678901234"
-        keyboa = Keyboa(items=list(range(0, 3)), back_marker=marker_65).keyboard
+        keyboa = Keyboa(items=list(range(0, 3)), back_marker=marker_65)
+        keyboa()
 
 
 def test_minimal_kb_with_back_marker_out_of_limits_with_text():
@@ -338,14 +343,16 @@ def test_minimal_kb_with_back_marker_out_of_limits_with_text():
         marker_64 = "1234567890123456789012345678901234567890123456789012345678901234"
         keyboa = Keyboa(
             items=list(range(0, 3)), back_marker=marker_64, copy_text_to_callback=True
-        ).keyboard
+        )
+        keyboa()
 
 
 def test_minimal_kb_with_empty_back_marker():
     with pytest.raises(ValueError) as _:
         keyboa = Keyboa(
             items=list(range(0, 3)), back_marker=str(), copy_text_to_callback=False
-        ).keyboard
+        )
+        keyboa()
 
 
 def test_minimal_kb_with_back_marker_and_copy_text_to_callback():
@@ -420,7 +427,8 @@ def test_minimal_kb_with_items_in_row():
 
 def test_minimal_kb_with_items_in_row_out_of_limits():
     with pytest.raises(ValueError) as _:
-        keyboa = Keyboa(items=list(range(0, 12)), items_in_row=12).keyboard
+        keyboa = Keyboa(items=list(range(0, 12)), items_in_row=12)
+        keyboa()
 
 
 def test_minimal_kb_with_alignment_true_slice():
@@ -445,7 +453,8 @@ def test_minimal_kb_with_alignment_specified():
 
 def test_minimal_kb_with_alignment_specified_out_of_limits():
     with pytest.raises(ValueError) as _:
-        keyboa = Keyboa(items=list(range(0, 12)), alignment=range(0, 12)).keyboard
+        keyboa = Keyboa(items=list(range(0, 12)), alignment=range(0, 12))
+        keyboa()
 
 
 def test_minimal_kb_with_alignment_specified_and_reversed_alignment_true():
@@ -539,7 +548,8 @@ def test_structured_kb_with_alignment():
                 [7, 8, 9],
             ],
             alignment=True,
-        ).keyboard
+        )
+        keyboa()
 
 
 def test_structured_kb_with_items_in_row():
@@ -551,8 +561,8 @@ def test_structured_kb_with_items_in_row():
                 [7, 8, 9],
             ],
             items_in_row=6,
-        ).keyboard
-
+        )
+        keyboa()
 
 def test_structured_kb_with_front_marker():
     keyboa = Keyboa(
