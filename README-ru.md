@@ -194,7 +194,7 @@ bot.send_message(chat_id=user_id, text="Select your city:", reply_markup=kb_citi
     [{'text': 'Tokyo', 'callback_data': '&city=Tokyo$'}]
 ]}
 ```
-Предположем пользователь выбрал ```London```. Хотелось бы это запомнить и предоставить ему выбор их нескольких улиц:
+Предположем пользователь выбрал ```London```. Хотелось бы это запомнить и предоставить ему выбор из нескольких улиц:
 ```python
 received_callback = call.data  # "&city=London$"
 streets = ["Baker Street", "Oxford Street", "Abbey Road", ]
