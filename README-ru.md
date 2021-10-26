@@ -66,7 +66,7 @@ bot.send_message(chat_id=chat_id, text=text, reply_markup=keyboard())
 ```
 ![keyboard from list of str](https://telegra.ph/file/d9280b11ed11ec13e6f56.png)
 
-По дефолту, каждый предмет становиться отдельной строкой. Это легко изменить объединив предметы в группы.
+По дефолту, каждый элемент становиться отдельной строкой. Это легко изменить объединив элементы в группы.
 ```python
 menu = [["spam", "eggs"], ["ham", "bread"], "spam"]
 keyboard = Keyboa(items=menu)
