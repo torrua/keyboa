@@ -27,9 +27,9 @@ jobs:
       - run:
           name: run tests
           command: |
-            coverage run -m pytest ./tests/*
-            coverage html --omit=env/*,tests/*
-            coverage xml --omit=env/*,tests/*
+            python -m pipenv run coverage run -m pytest ./tests/*
+            python -m pipenv run coverage html --omit=env/*,tests/*
+            python -m pipenv run coverage xml --omit=env/*,tests/*
       - run:
           name: Run coverage report
           command: |
