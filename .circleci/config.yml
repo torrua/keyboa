@@ -5,7 +5,7 @@ orbs:
 jobs:
   test-and-coverage:
     docker:
-      - image: circleci/python:3.8
+      - image: cimg/python:3.8
         environment:
           - CC_TEST_REPORTER_ID: 82936cef131150ab03b4f8ec664ffd679861ac2ce6a6c26cb8c954baed99ce9c
     steps:
