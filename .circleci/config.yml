@@ -27,7 +27,7 @@ jobs:
       - run:
           name: run tests
           command: |
-            coverage run -m pytest tests/*
+            coverage run -m pytest ./tests/*
             coverage html --omit=env/*,tests/*
             coverage xml --omit=env/*,tests/*
       - run:
