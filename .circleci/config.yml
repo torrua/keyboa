@@ -16,6 +16,7 @@ jobs:
             python3 -m venv env
             . env/bin/activate
             pip3 install -r requirements-test.txt
+            pip3 install coverage
       - run:
           name: install codeclimate test-reporter
           command: |
