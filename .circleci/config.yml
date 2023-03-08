@@ -36,6 +36,11 @@ jobs:
             ./cc-test-reporter format-coverage -t coverage.py
             ./cc-test-reporter upload-coverage
       - run:
+          name: Coverage to scrutinizer
+          command: |
+            bash <(curl -s https://codecov.io/bash)
+            ocular --data-file ".coverage" --config-file ".coveragerc"
+      - run:
           command: |
             ./cc-test-reporter after-build --exit-code $?
 
