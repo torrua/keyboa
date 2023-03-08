@@ -1,0 +1,45 @@
+version: 2.1
+orbs:
+  python: circleci/python@2.0.3
+
+jobs:
+  test-and-coverage:
+    docker:
+      - image: cimg/python:3.8
+        environment:
+          - CC_TEST_REPORTER_ID: 82936cef131150ab03b4f8ec664ffd679861ac2ce6a6c26cb8c954baed99ce9c
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            pip3 install -r requirements-test.txt
+            pip3 install coverage
+      - run:
+          name: install codeclimate test-reporter
+          command: |
+            # download test reporter as a static binary
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          command: |
+            ./cc-test-reporter before-build
+      - run:
+          name: run tests
+          command: |
+            coverage run -m pytest ./tests/*
+            coverage html --omit=env/*,tests/*
+            coverage xml --omit=env/*,tests/*
+      - run:
+          name: Run coverage report
+          command: |
+            ./cc-test-reporter format-coverage -t coverage.py
+            ./cc-test-reporter upload-coverage
+      - run:
+          command: |
+            ./cc-test-reporter after-build --exit-code $?
+
+workflows:
+  test_keyboa:
+    jobs:
+      - test-and-coverage
