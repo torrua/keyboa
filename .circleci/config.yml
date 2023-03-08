@@ -9,6 +9,13 @@ jobs:
       - checkout
       - python/install-packages:
           pkg-manager: pip
+      - python/install-packages:
+          pip-dependency-file: requirements-test.txt
+          pkg-manager: pip
+      - python/install-packages:
+          args: pytest
+          pkg-manager: pip
+          pypi-cache: false
       - run:
           name: Run tests
           command: python -m pytest
