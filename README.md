@@ -6,7 +6,7 @@
 ![CodeQL](https://github.com/torrua/keyboa/workflows/CodeQL/badge.svg?branch=master)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/torrua/keyboa/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/torrua/keyboa/?branch=master)
 [![codecov](https://codecov.io/gh/torrua/keyboa/branch/master/graph/badge.svg?token=H4MO1Y3DDY)](https://codecov.io/gh/torrua/keyboa)
-[![Maintainability](https://api.codeclimate.com/v1/badges/bdf2e96fd22b46fb3833/maintainability)](https://codeclimate.com/github/torrua/keyboa/maintainability)
+![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/torrua/keyboa)
 
 This is a simple but flexible inline keyboard generator that works as an add-on to PyTelegramBotAPI package. With **keyboa** you can:
 - quickly create buttons with complex callback, 
