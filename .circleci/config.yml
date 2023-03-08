@@ -45,4 +45,3 @@ workflows:
   test_keyboa:
     jobs:
       - test-and-coverage
-        name:"test-coverage"
