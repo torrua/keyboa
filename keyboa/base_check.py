@@ -66,9 +66,9 @@ class BaseCheck:
         ):
             value_error_message = (
                 "The auto_alignment's item values should be between "
-                "%s and %s. You entered: %s\n"
+                f"{MINIMUM_ITEMS_IN_LINE} and {MAXIMUM_ITEMS_IN_LINE}. "
+                f"You entered: {auto_alignment}\n"
                 "You may define it as 'True' to use AUTO_ALIGNMENT_RANGE."
-                % (MINIMUM_ITEMS_IN_LINE, MAXIMUM_ITEMS_IN_LINE, auto_alignment)
             )
             raise ValueError(value_error_message)
 
@@ -94,6 +94,6 @@ class BaseCheck:
         if keyboard and not isinstance(keyboard, InlineKeyboardMarkup):
             type_error_message = (
                 "Keyboard to which the new items will be added "
-                "should have InlineKeyboardMarkup type. Now it is a %s" % type(keyboard)
+                f"should have InlineKeyboardMarkup type. Now it is a {type(keyboard)}"
             )
             raise TypeError(type_error_message)
