@@ -18,16 +18,17 @@ class Base(BaseCheck):  # pylint: disable = R0902
     Base initial class for Keyboa
     """
 
-    def __init__(  # pylint: disable = R0913
+    def __init__(
         self,
         items: BlockItems,
+        *,
         items_in_row: int = None,
-        front_marker: CallbackDataMarker = str(),
-        back_marker: CallbackDataMarker = str(),
+        front_marker: CallbackDataMarker = "",
+        back_marker: CallbackDataMarker = "",
         copy_text_to_callback: Optional[bool] = True,
         alignment: Union[bool, Iterable] = None,
         alignment_reverse: Optional[bool] = None,
-    ):
+    ) -> None:
         self._items = None
         self.items = items
 

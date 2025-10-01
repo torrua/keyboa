@@ -160,8 +160,8 @@ class Keyboa(Base):
 
             if not isinstance(keyboard, InlineKeyboardMarkup):
                 type_error_message = (
-                    "Keyboard cannot be %s. Only InlineKeyboardMarkup allowed."
-                    % type(keyboard)
+                    f"Keyboard cannot be {type(keyboard)}. "
+                    "Only InlineKeyboardMarkup allowed."
                 )
                 raise TypeError(type_error_message)
             data.extend(keyboard.keyboard)

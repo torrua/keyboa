@@ -79,6 +79,14 @@ class Button(ButtonCheck):
 
     @property
     def button(self):
+        """Property that generates and returns an InlineKeyboardButton.
+        
+        This is a convenience property that calls the generate() method.
+        It allows accessing the button directly as an attribute.
+        
+        Returns:
+            telebot.types.InlineKeyboardButton: The generated inline keyboard button.
+        """
         return self.generate()
 
     def is_auto_copy_text_to_callback(self):
@@ -118,7 +126,7 @@ class Button(ButtonCheck):
         front_marker = cls.get_checked_marker(front_marker)
         back_marker = cls.get_checked_marker(back_marker)
 
-        callback_data = "%s%s%s" % (front_marker, raw_callback, back_marker)
+        callback_data = f"{front_marker}{raw_callback}{back_marker}"
 
         if not callback_data:
             raise ValueError("The callback data cannot be empty.")
@@ -137,9 +145,9 @@ class Button(ButtonCheck):
             marker = str()
 
         if not isinstance(marker, callback_data_types):
-            type_error_message = "Marker could not have %s type. Only %s allowed." % (
-                type(marker),
-                CallbackDataMarker,
+            type_error_message = (
+                f"Marker could not have {type(marker)} type. "
+                f"Only {CallbackDataMarker} allowed."
             )
             raise TypeError(type_error_message)
 
@@ -153,9 +161,9 @@ class Button(ButtonCheck):
         """
         raw_text = button_data[0]
         if not isinstance(raw_text, button_text_types):
-            type_error_message = "Button text cannot be %s. Only %s allowed." % (
-                type(raw_text),
-                ButtonText,
+            type_error_message = (
+                f"Button text cannot be {type(raw_text)}. "
+                f"Only {ButtonText} allowed."
             )
             raise TypeError(type_error_message)
         text = str(raw_text)
